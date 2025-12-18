@@ -1,13 +1,7 @@
-function Login() {
+import LoginForm from "../components/forms/LoginForm";
 
-    return (
-        <>
-            <p>Email</p>
-            <input type="text" />
-            <p>Password</p>
-            <input type="password" name="" id="" />
-        </>
-    )
+function Login() {
+  return <LoginForm />;
 }
 
-export default Login
+export default Login;
