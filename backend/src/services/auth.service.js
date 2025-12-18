@@ -9,9 +9,10 @@ export const loginService = async (email, password) => {
     throw new Error("User not found");
   }
 
-  if (!user.is_verified) {
-    throw new Error("Account not verified");
-  }
+    if (!user || user.is_verified !== 'Verified') {
+    throw new Error("Invalid credentials");
+    }
+
 
   const isMatch = await bcrypt.compare(password, user.password_hash);
   if (!isMatch) {
