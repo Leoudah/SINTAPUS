@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -21,7 +23,23 @@ function Login() {
     }
 
     localStorage.setItem("token", data.token);
-    alert("Login success");
+    const token = localStorage.getItem("token");
+
+    const payload = JSON.parse(
+      atob(token.split(".")[1])
+    );
+
+    console.log(payload);
+    if (payload.role === "Dosen") {
+      navigate("/dosen/DashboardD");
+    } else if (payload.role === "Admin") {
+      navigate("/admin/DashboardA");
+    } else {
+      // role tidak dikenal → logout paksa
+      localStorage.removeItem("token");
+      navigate("/login");
+    }
+
   };
 
   return (
