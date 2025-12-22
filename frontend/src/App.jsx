@@ -1,10 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LandingPage from "./pages/LandingPage";
+import LandingPage from "./pages/Public/LandingPage";
 import Login from "./pages/Login";
 
-import DashboardA from "./pages/admin/DashboardA";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
-import DashboardD from "./pages/dosen/DashboardD";
+import DashboardAdmin from "./pages/admin/DashboardAdmin";
+
+import DashboardDosen from "./pages/dosen/DashboardDosen";
 
 function App() {
   return (
@@ -13,9 +15,14 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
 
-        <Route path="/admin/DashboardA" element={<DashboardA />} />
+        {/* Command Jangan Dihapus */}
+        {/* <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}> */}
+          <Route path="/dashboard/admin" element={<DashboardAdmin />} />
+        {/* </Route> */}
 
-        <Route path="/dosen/DashboardD" element={<DashboardD />} />
+        {/* <Route element={<ProtectedRoute allowedRoles={["Dosen"]} />}> */}
+          <Route path="/dashboard/dosen" element={<DashboardDosen />} />
+        {/* </Route> */}
       </Routes>
     </Router>
   );
