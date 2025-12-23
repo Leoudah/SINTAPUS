@@ -1,11 +1,12 @@
 // import { useLogout } from "../hooks/useLogout";
-import Navbar, { Sidebar } from '../../components/Navbar';
+import Navbar from '../../components/Navbar';
+import SidebarDosen from '../../components/SidebarDosen';
 function Dashboard() {
   // const logout = useLogout();
 
   return (
     <div className="flex">
-      <Sidebar />
+      <SidebarDosen />
       <div className="flex-1">
         <Navbar />
         <div className="p-4">
