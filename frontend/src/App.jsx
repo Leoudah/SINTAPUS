@@ -16,6 +16,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
         {/* Command Jangan Dihapus */}
         {/* <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}> */}

@@ -1,4 +1,4 @@
-import api from "./axios";
+import api from "./axios.api";
 
 export const login = async (email, password) => {
   const res = await fetch("http://localhost:5000/api/auth/login", {
@@ -12,13 +12,6 @@ export const login = async (email, password) => {
 
 // REGISTER DOSEN
 export const registerDosen = async (data) => {
-      email,
-      password,
-      nama,
-      nidn,
-      id_card,
-      citizenship,
-      id_afiliasi
   const res = await api.post("/auth/register", data);
   return res.data;
 };

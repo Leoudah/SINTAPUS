@@ -15,12 +15,6 @@ export default function Register() {
     id_afiliasi: "",
   });
 
-  if (!form.email || !form.password || !form.nama || !form.nidn) {
-    alert("Data wajib belum lengkap");
-    return;
-  }
-
-
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -36,6 +30,7 @@ export default function Register() {
       navigate("/login");
     } catch (err) {
       alert(err.response?.data?.message || "Register failed");
+      console.log(err)
     }
   };
 
