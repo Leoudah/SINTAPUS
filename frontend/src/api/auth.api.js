@@ -1,3 +1,5 @@
+import api from "./axios";
+
 export const login = async (email, password) => {
   const res = await fetch("http://localhost:5000/api/auth/login", {
     method: "POST",
@@ -6,4 +8,17 @@ export const login = async (email, password) => {
   });
 
   return res.json();
+};
+
+// REGISTER DOSEN
+export const registerDosen = async (data) => {
+      email,
+      password,
+      nama,
+      nidn,
+      id_card,
+      citizenship,
+      id_afiliasi
+  const res = await api.post("/auth/register", data);
+  return res.data;
 };

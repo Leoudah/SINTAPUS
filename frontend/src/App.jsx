@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/Public/LandingPage";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
 
