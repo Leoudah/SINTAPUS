@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import backgroundImg from '../assets/unudtanda.png';
 
 function Login() {
   const navigate = useNavigate();
@@ -43,10 +44,12 @@ function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
+    <div className="flex items-center justify-center min-h-screen relative">
+      <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${backgroundImg})`, filter: 'blur(5px)' }}></div>
+      <div className="absolute inset-0 bg-blue-500 opacity-50"></div>
+      <div className="relative z-10 w-full max-w-md bg-white rounded-lg shadow-md p-8">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-          Login to Your Account
+          Masuk ke Akun SINTA
         </h2>
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
@@ -79,13 +82,13 @@ function Login() {
             type="submit"
             className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Login
+            Masuk
           </button>
         </form>
         <p className="text-sm text-gray-600 mt-4 text-center">
-          Don’t have an account?{" "}
+          Belum punya akun?{" "}
           <a href="/register" className="text-blue-600 hover:underline">
-            Sign up
+            Daftar
           </a>
         </p>
       </div>

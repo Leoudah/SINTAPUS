@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { registerDosen } from "../api/auth.api";
 import { useNavigate } from "react-router-dom";
+import backgroundImg from '../assets/unudtanda.png';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -35,10 +36,12 @@ export default function Register() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-2xl bg-white rounded-lg shadow-md p-8">
+    <div className="flex items-center justify-center min-h-screen relative">
+      <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${backgroundImg})`, filter: 'blur(5px)' }}></div>
+      <div className="absolute inset-0 bg-blue-500 opacity-50"></div>
+      <div className="relative z-10 w-full max-w-2xl bg-white rounded-lg shadow-md p-8">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-          Register Your Account
+          Daftar Akun SINTA
         </h2>
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
           <div>
@@ -131,13 +134,13 @@ export default function Register() {
             type="submit"
             className="col-span-2 w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Register
+            Daftar
           </button>
         </form>
         <p className="text-sm text-gray-600 mt-4 text-center">
-          Already have an account?{" "}
+          Sudah memiliki akun?{" "}
           <a href="/login" className="text-blue-600 hover:underline">
-            Login
+            Masuk
           </a>
         </p>
       </div>
