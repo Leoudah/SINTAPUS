@@ -35,18 +35,112 @@ export default function Register() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto p-6 space-y-4">
-      <input name="email" onChange={handleChange} placeholder="Email" />
-      <input name="password" type="password" onChange={handleChange} placeholder="Password" />
-      <input name="nama" onChange={handleChange} placeholder="Nama Lengkap" />
-      <input name="nidn" onChange={handleChange} placeholder="NIDN" />
-      <input name="id_card" onChange={handleChange} placeholder="ID Card" />
-      <input name="citizenship" onChange={handleChange} placeholder="Citizenship ID" />
-      <input name="id_afiliasi" onChange={handleChange} placeholder="Afiliasi ID" />
-
-      <button className="bg-blue-600 text-white px-4 py-2">
-        Register
-      </button>
-    </form>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="w-full max-w-2xl bg-white rounded-lg shadow-md p-8">
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+          Register Your Account
+        </h2>
+        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
+            <input
+              name="email"
+              type="email"
+              onChange={handleChange}
+              placeholder="you@example.com"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
+            <input
+              name="password"
+              type="password"
+              onChange={handleChange}
+              placeholder="••••••••"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Nama Lengkap
+            </label>
+            <input
+              name="nama"
+              onChange={handleChange}
+              placeholder="Nama Lengkap"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              NIDN
+            </label>
+            <input
+              name="nidn"
+              onChange={handleChange}
+              placeholder="NIDN"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              ID Card
+            </label>
+            <input
+              name="id_card"
+              onChange={handleChange}
+              placeholder="ID Card"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Citizenship ID
+            </label>
+            <input
+              name="citizenship"
+              onChange={handleChange}
+              placeholder="Citizenship ID"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              required
+            />
+          </div>
+          <div className="col-span-2 flex flex-col items-center">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Afiliasi ID
+            </label>
+            <input
+              name="id_afiliasi"
+              onChange={handleChange}
+              placeholder="Afiliasi ID"
+              className="w-full max-w-xs px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="col-span-2 w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Register
+          </button>
+        </form>
+        <p className="text-sm text-gray-600 mt-4 text-center">
+          Already have an account?{" "}
+          <a href="/login" className="text-blue-600 hover:underline">
+            Login
+          </a>
+        </p>
+      </div>
+    </div>
   );
 }
