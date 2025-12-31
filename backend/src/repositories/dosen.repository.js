@@ -1,4 +1,5 @@
 import db from '../config/database.js';
+import { findUserByEmail } from '../models/user.model.js';
 
 class DosenRepository {
   /**
@@ -17,4 +18,4 @@ class DosenRepository {
   }
 }
 
-export default DosenRepository;
+export default new DosenRepository();

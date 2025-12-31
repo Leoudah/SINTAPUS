@@ -70,4 +70,4 @@ class PublicationRepository {
   }
 }
 
-export default PublicationRepository;
+export default new PublicationRepository();

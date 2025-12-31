@@ -9,7 +9,7 @@ export const loginService = async (email, password) => {
     throw new Error("User not found");
   }
 
-    if (!user || user.is_verified !== 'Verified') {
+    if (!user || user.status !== 'verified') {
     throw new Error("Invalid credentials");
     }
 

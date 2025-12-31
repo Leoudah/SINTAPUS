@@ -33,4 +33,4 @@ class SyncRepository {
     ]);
   }
 }
-export default SyncRepository;
+export default new SyncRepository();

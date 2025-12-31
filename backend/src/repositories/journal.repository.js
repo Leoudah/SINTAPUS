@@ -32,4 +32,4 @@ class JournalRepository {
   }
 }
 
-export default JournalRepository;
+export default new JournalRepository();
