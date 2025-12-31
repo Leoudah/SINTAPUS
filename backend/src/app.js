@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use("/api/admin", adminRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api", apiRoutes);
+app.use("/api/api", apiRoutes);
 
 // Global Error Handler
 app.use((err, req, res, next) => {

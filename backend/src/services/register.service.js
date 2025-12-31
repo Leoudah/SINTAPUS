@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
-import db from "../config/db.js";
+import db from "../config/database.js";
 import { findUserByEmail } from "../models/user.model.js";
 
-export const registerDosen = async ({ email, password, nama, nidn, id_card, id_afiliasi, scopus_author_id, citizenship}) => {
+export const registerDosen = async ({ email, password, nama, nidn, id_card, id_afiliasi, scopus_author_id, citizenship }) => {
   // 1. Cek email
   const existingUser = await findUserByEmail(email);
   if (existingUser) {
