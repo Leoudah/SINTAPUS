@@ -3,7 +3,7 @@ import LandingPage from "./pages/Public/LandingPage";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
-// import ProtectedRoute from "./routes/ProtectedRoute";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 import DashboardAdmin from "./pages/admin/admin";
 import ManageAccount from "./pages/admin/manageAccount";
@@ -18,14 +18,14 @@ function App() {
         <Route path="/register" element={<Register />} />
 
         {/* Command Jangan Dihapus */}
-        {/* <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}> */}
+        <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}>
           <Route path="/dashboard/admin" element={<DashboardAdmin />} />
           <Route path="/dashboard/admin/manage" element={<ManageAccount />} />
-        {/* </Route> */}
+        </Route>
 
-        {/* <Route element={<ProtectedRoute allowedRoles={["Dosen"]} />}> */}
+        <Route element={<ProtectedRoute allowedRoles={["Dosen"]} />}>
           <Route path="/dashboard/dosen" element={<DashboardDosen />} />
-        {/* </Route> */}
+        </Route>
       </Routes>
   );
 }
