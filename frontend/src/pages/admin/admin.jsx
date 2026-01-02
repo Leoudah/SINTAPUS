@@ -89,7 +89,7 @@ export default function Admin() {
               </button>
             </div>
           </div>
-
+        
           <AdminNavbar />
         </div>
       </div>
