@@ -6,6 +6,7 @@ import Register from "./pages/Register";
 // import ProtectedRoute from "./routes/ProtectedRoute";
 
 import DashboardAdmin from "./pages/admin/admin";
+import ManageAccount from "./pages/admin/manageAccount";
 
 import DashboardDosen from "./pages/dosen/DashboardDosen";
 
@@ -19,6 +20,7 @@ function App() {
         {/* Command Jangan Dihapus */}
         {/* <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}> */}
           <Route path="/dashboard/admin" element={<DashboardAdmin />} />
+          <Route path="/dashboard/admin/manage" element={<ManageAccount />} />
         {/* </Route> */}
 
         {/* <Route element={<ProtectedRoute allowedRoles={["Dosen"]} />}> */}
