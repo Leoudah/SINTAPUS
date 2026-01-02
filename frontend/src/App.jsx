@@ -3,16 +3,14 @@ import LandingPage from "./pages/Public/LandingPage";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
-import ProtectedRoute from "./routes/ProtectedRoute";
+// import ProtectedRoute from "./routes/ProtectedRoute";
 
-import DashboardAdmin from "./pages/admin/DashboardAdmin";
+import DashboardAdmin from "./pages/admin/admin";
 
 import DashboardDosen from "./pages/dosen/DashboardDosen";
 
-
 function App() {
   return (
-    <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
@@ -27,7 +25,6 @@ function App() {
           <Route path="/dashboard/dosen" element={<DashboardDosen />} />
         {/* </Route> */}
       </Routes>
-    </Router>
   );
 }
 
