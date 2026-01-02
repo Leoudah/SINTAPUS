@@ -24,6 +24,7 @@ export default function AccountTable({ data, reload }) {
               <th className="px-4 py-3 text-left">Email</th>
               <th className="px-4 py-3 text-left">Status</th>
               <th className="px-4 py-3 text-left">Nama</th>
+              <th className="px-4 py-3 text-left">NIDN</th>
               <th className="px-4 py-3 text-center">Aksi</th>
             </tr>
           </thead>
@@ -55,18 +56,15 @@ export default function AccountTable({ data, reload }) {
                 </td>
 
                 <td className="px-4 py-3">{row.nama || "-"}</td>
+                <td className="px-4 py-3">{row.nidn || "-"}</td>
 
                 <td className="px-4 py-3 text-center">
-                  {row.status === "submitted" ? (
                     <button
                       onClick={() => setSelectedId(row.id_user)}
                       className="px-3 py-1.5 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
                     >
                       Verifikasi
                     </button>
-                  ) : (
-                    <span className="text-gray-400 text-xs">—</span>
-                  )}
                 </td>
               </tr>
             ))}
