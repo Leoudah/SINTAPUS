@@ -85,3 +85,53 @@ export const updateAccountStatus = async (req, res) => {
     });
   }
 };
+
+export const getPublications = async (req, res) => {
+  try {
+    const { status } = req.query;
+
+    if (status && !['draft', 'submitted', 'verified', 'rejected'].includes(status)) {
+      return res.status(400).json({ success: false, message: 'Invalid status filter' });
+    }
+
+    const data = await adminService.getPublicationsByStatus(status);
+    res.json({ success: true, data });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+export const getPublicationDetail = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const data = await adminService.getPublicationDetail(id);
+    if (!data) {
+      return res.status(404).json({ success: false, message: 'Publication not found' });
+    }
+
+    res.json({ success: true, data });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+export const updatePublicationStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status, verification_note } = req.body;
+    const adminId = req.user.id_user;
+
+    if (!['verified', 'rejected'].includes(status)) {
+      return res.status(400).json({ success: false, message: 'Status must be verified or rejected' });
+    }
+
+    await adminService.updatePublicationStatus(id, status, verification_note ?? null, adminId);
+
+    res.json({ success: true, message: 'Publication status updated' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message || 'Server error' });
+  }
+};
