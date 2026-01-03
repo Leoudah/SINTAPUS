@@ -25,6 +25,7 @@ function Login() {
 
     localStorage.setItem("token", data.token);
     const token = localStorage.getItem("token");
+    console.log(token);
 
     const payload = JSON.parse(
       atob(token.split(".")[1])
