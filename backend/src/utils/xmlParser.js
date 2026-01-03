@@ -10,7 +10,7 @@ const parseScopusXml = async (xmlData) => {
     ignoreAttrs: false,
     // FIX 2: merge attributes into the object so we can access entry.link[0].href directly
     mergeAttrs: true,
-    tagNameProcessors: [xml2js.processors.stripPrefix], // Keep this (dc:title -> title)
+    // Remove stripPrefix to keep prefixed keys for consistency
   });
 
   try {

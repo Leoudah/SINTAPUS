@@ -53,7 +53,7 @@ class SyncService {
       return { success: true, stats };
 
     } catch (error) {
-      if (connection) try { await connection.rollback(); } catch (e) {}
+      if (connection) try { await connection.rollback(); } catch (e) { }
 
       if (id_sinkron) {
         const logConnection = await db.getConnection();
@@ -89,34 +89,48 @@ class SyncService {
 
     if (!existingPub) {
       const newId = await publicationRepo.createPublication(mappedData, connection);
-      await publicationRepo.linkAuthor( newId, dosen.id_dosen, authorName, dosen.id_afiliasi, connection);
+      await publicationRepo.linkAuthor(newId, dosen.id_dosen, authorName, dosen.id_afiliasi, connection);
       stats.new++;
     } else {
       const hasChanged = this.hasMetadataChanged(existingPub, mappedData);
       if (hasChanged) {
-        await publicationRepo.updatePublication( existingPub.id_publikasi, mappedData, connection);
-        await publicationRepo.linkAuthor( existingPub.id_publikasi, dosen.id_dosen, authorName, dosen.id_afiliasi, connection);
+        await publicationRepo.updatePublication(existingPub.id_publikasi, mappedData, connection);
+        await publicationRepo.linkAuthor(existingPub.id_publikasi, dosen.id_dosen, authorName, dosen.id_afiliasi, connection);
         stats.updated++;
       }
     }
   }
 
   mapScopusData(entry) {
-    // FIX: Using keys WITHOUT prefixes (dc:, prism:)
-    const coverDate = entry.coverDate || entry.coverDisplayDate;
+    // FIX 1: Handle date keys
+    const coverDate = entry.coverDate || entry['prism:coverDate'] || entry.coverDisplayDate || entry['prism:coverDisplayDate'];
     const year = coverDate ? new Date(coverDate).getFullYear() : null;
 
+    // FIX 2: Handle creator keys (prefixed vs non-prefixed)
+    let rawCreator = entry.creator || entry['dc:creator'];
+
+    // Convert array to string if necessary
+    if (Array.isArray(rawCreator)) {
+      rawCreator = rawCreator.join(', ');
+    }
+
+    // FIX 3: Prevent database error by truncating if you keep VARCHAR(255)
+    // Ideally, change DB column to TEXT. If you can't, use this:
+    if (rawCreator && rawCreator.length > 255) {
+      rawCreator = rawCreator.substring(0, 252) + '...';
+    }
+
     return {
-      eid: entry.eid || null,
-      doi: entry.doi || null,
-      judul: entry.title || 'Untitled', // dc:title -> title
-      creator: entry.creator || null, // dc:creator -> creator
+      eid: entry.eid || entry['dc:identifier'] || null,
+      doi: entry.doi || entry['prism:doi'] || null,
+      judul: entry.title || entry['dc:title'] || 'Untitled',
+      creator: rawCreator || null, // Now using the resolved variable
       tahun: year || null,
-      jenis: this.normalizeAggregationType(entry.aggregationType),
+      jenis: this.normalizeAggregationType(entry.aggregationType || entry['prism:aggregationType']),
       link_publikasi: this.findScopusLink(entry),
-      citation_count: parseInt(entry['citedby-count'] || 0),
-      journal_name: entry.publicationName || null,
-      issn: entry.issn || entry.eIssn || null
+      citation_count: parseInt(entry['citedby-count'] || entry['prism:citedby-count'] || 0),
+      journal_name: entry.publicationName || entry['prism:publicationName'] || null,
+      issn: entry.issn || entry['prism:issn'] || entry.eIssn || entry['prism:eIssn'] || null
     };
   }
 
@@ -124,7 +138,7 @@ class SyncService {
     // FIX: With mergeAttrs=true, entry.link is an array of objects like { ref: '...', href: '...' }
     if (entry.link) {
       const links = Array.isArray(entry.link) ? entry.link : [entry.link];
-      
+
       // Look for ref="scopus"
       const scopusLink = links.find(l => l.ref === 'scopus');
       if (scopusLink && scopusLink.href) return scopusLink.href;
@@ -151,6 +165,7 @@ class SyncService {
     if (existing.judul !== incoming.judul) return true;
     if ((existing.doi || '') !== (incoming.doi || '')) return true;
     if (existing.citation_count !== incoming.citation_count) return true;
+    if ((existing.creator || '') !== (incoming.creator || '')) return true;
     return false;
   }
 }
