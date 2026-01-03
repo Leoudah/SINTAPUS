@@ -1,5 +1,5 @@
 import express from "express";
-import { getDosenCards, getDosenDetail } from "../controllers/public.controller.js";
+import { getDosenCards, getDosenDetail, getDosenPublicationsPage } from "../controllers/public.controller.js";
 
 const router = express.Router();
 
@@ -10,7 +10,7 @@ router.get("/dosen/:id", getDosenDetail);
 
 router.get("/dosen/:id_dosen", getDosenCards);
 
-router.get("/dosen/:id_dosen/publikasi", getDosenCards);
+router.get("/dosen/:id_dosen/publikasi", getDosenPublicationsPage);
 
 
 export default router;
