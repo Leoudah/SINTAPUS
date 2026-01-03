@@ -11,7 +11,6 @@ export const getDosenCards = async (req, res) => {
     }  
 };
 
-<<<<<<< HEAD
 export const getDosenDetail = async (req, res) => {
   try {
     const id = req.params.id;
@@ -25,7 +24,7 @@ export const getDosenDetail = async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error' });
   }
 };
-=======
+
 export const getDosenPage = async (req, res) => {
     try {
         const { id_dosen } = req.params;
@@ -48,4 +47,3 @@ export const getDosenPublicationsPage = async (req, res) => {
         res.status(500).json({ success: false, message: 'Server error' });
     }   
 };
->>>>>>> 1c59374cf8f11d8c0e8fd0b009c9aca0e74a7387
