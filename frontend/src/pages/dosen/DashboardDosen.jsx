@@ -2,7 +2,7 @@
 import Navbar from '../../components/Navbar';
 import SidebarDosen from '../../components/SidebarDosen';
 function Dashboard() {
-  // const logout = useLogout();
+ // const logout = useLogout();
 
   return (
     <div className="flex">

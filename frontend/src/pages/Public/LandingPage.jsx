@@ -4,6 +4,7 @@ import bg1 from "../../assets/unudrektorat.png";
 import bg2 from "../../assets/unudpimpinan.png";
 import bg3 from "../../assets/unudtanda.png";
 import LogoFMIPA from "../../assets/FMIPA.png";
+import NavbarPublik from "../../components/navbarpublik";
 
 const images = [bg1, bg2, bg3];
 
@@ -19,6 +20,7 @@ function LandingPage() {
 
   return (
     <div className="flex flex-col min-h-screen text-white">
+      <NavbarPublik />
       {/* Hero Section */}
       <div className="relative flex flex-col items-center justify-center min-h-screen text-center px-6 overflow-hidden">
         {/* Background slideshow */}

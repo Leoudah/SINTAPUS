@@ -8,6 +8,8 @@ import Register from "./pages/Register";
 import DashboardAdmin from "./pages/admin/admin";
 import ManageAccount from "./pages/admin/manageAccount";
 import Testing from "./pages/Public/Testings";
+import DosenPublik from "./pages/Public/dosenpublik";
+import Afiliasi from "./pages/Public/afiliasi";
 
 import DashboardDosen from "./pages/dosen/DashboardDosen";
 
@@ -19,6 +21,8 @@ function App() {
         <Route path="/register" element={<Register />} />
         
         <Route path="/Testing" element={<Testing />} />
+        <Route path="/dosenpublik" element={<DosenPublik />} />
+        <Route path="/afiliasi" element={<Afiliasi />} />
 
         {/* Command Jangan Dihapus */}
         {/* <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}> */}

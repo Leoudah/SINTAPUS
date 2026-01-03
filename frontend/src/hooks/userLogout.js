@@ -1,11 +1,12 @@
-import { useNavigate } from "react-router-dom";
-
 export function useLogout() {
-  const navigate = useNavigate();
-
   const logout = () => {
+    // clear auth data
     localStorage.removeItem("token");
-    navigate("/login");
+    localStorage.removeItem("role");
+
+    // do a full-page replace to /login so the protected page is removed from history
+    // and the user cannot navigate back to it using the browser back button
+    window.location.replace('/login');
   };
 
   return logout;
