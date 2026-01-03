@@ -1,5 +1,4 @@
 import db from '../config/database.js';
-import { findUserByEmail } from '../models/user.model.js';
 
 class DosenRepository {
   /**
@@ -16,6 +15,37 @@ class DosenRepository {
     const [rows] = await db.execute(query, [scopusAuthorId]);
     return rows[0];
   }
+
+  async findDosenByName(name) {
+    const query = `
+      SELECT id_dosen, nama_dosen
+      FROM dosen
+      WHERE nama_dosen LIKE CONCAT('%', ?, '%')
+      ORDER BY nama_dosen
+      LIMIT 10;
+    `;
+    const [rows] = await db.execute(query, [name]);
+    return rows[0];
+  }
+
+  async findDosenCard(name) {
+    const query = `
+      SELECT 
+        d.id_dosen,
+        d.nama_dosen,
+        d.afiliansi,
+        COUNT(p.id_publikasi) AS total_publikasi
+      FROM dosen d
+      LEFT JOIN publikasi p ON p.id_dosen = d.id_dosen
+      WHERE d.nama_dosen LIKE CONCAT('%', ?, '%')
+      GROUP BY d.id_dosen
+      ORDER BY d.nama_dosen
+      LIMIT 20;
+    `;
+    const [rows] = await db.execute(query, [name]);
+    return rows[0];
+  }
+
 }
 
 export default new DosenRepository();
