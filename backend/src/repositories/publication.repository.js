@@ -12,8 +12,8 @@ class PublicationRepository {
     // FIX: Added id_jurnal to INSERT statement
     const query = `
       INSERT INTO publikasi 
-      (eid, doi, judul, tahun, jenis, link_publikasi, citation_count, id_jurnal, status, is_public, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'submitted', 0, NOW())
+      (eid, doi, judul, creator, tahun, jenis, link_publikasi, citation_count, id_jurnal, status, is_public, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'submitted', 0, NOW())
     `;
     
     // FIX: Added data.id_jurnal to parameters
@@ -21,6 +21,7 @@ class PublicationRepository {
       data.eid,
       data.doi || null,
       data.judul || 'Untitled',
+      data.creator || 'Unknown',
       data.tahun || null,
       data.jenis || 'Other',
       data.link_publikasi || null,
@@ -38,7 +39,8 @@ class PublicationRepository {
       UPDATE publikasi 
       SET 
         doi = ?, 
-        judul = ?, 
+        judul = ?,
+        creator = ?, 
         tahun = ?, 
         jenis = ?, 
         link_publikasi = ?, 
@@ -52,6 +54,7 @@ class PublicationRepository {
     await connection.execute(query, [
       data.doi || null,
       data.judul || 'Untitled',
+      data.creator || 'Unknown',
       data.tahun || null,
       data.jenis || 'Other',
       data.link_publikasi || null,

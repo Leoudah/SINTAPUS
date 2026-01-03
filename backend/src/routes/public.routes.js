@@ -8,4 +8,9 @@ router.get("/dosen", getDosenCards);
 // GET /api/public/dosen/:id
 router.get("/dosen/:id", getDosenDetail);
 
+router.get("/dosen/:id_dosen", getDosenCards);
+
+router.get("/dosen/:id_dosen/publikasi", getDosenCards);
+
+
 export default router;

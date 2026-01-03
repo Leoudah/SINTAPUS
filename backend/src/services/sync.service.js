@@ -110,6 +110,7 @@ class SyncService {
       eid: entry.eid || null,
       doi: entry.doi || null,
       judul: entry.title || 'Untitled', // dc:title -> title
+      creator: entry.creator || null, // dc:creator -> creator
       tahun: year || null,
       jenis: this.normalizeAggregationType(entry.aggregationType),
       link_publikasi: this.findScopusLink(entry),
