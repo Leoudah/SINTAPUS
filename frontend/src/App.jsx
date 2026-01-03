@@ -10,6 +10,7 @@ import ManageAccount from "./pages/admin/manageAccount";
 import Testing from "./pages/Public/Testings";
 import DosenPublik from "./pages/Public/dosenpublik";
 import Afiliasi from "./pages/Public/afiliasi";
+import DetailDosen from "./pages/Public/detaildosen";
 
 import DashboardDosen from "./pages/dosen/DashboardDosen";
 
@@ -23,6 +24,7 @@ function App() {
         <Route path="/Testing" element={<Testing />} />
         <Route path="/dosenpublik" element={<DosenPublik />} />
         <Route path="/afiliasi" element={<Afiliasi />} />
+        <Route path="/detaildosen/:id" element={<DetailDosen />} />
 
         {/* Command Jangan Dihapus */}
         {/* <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}> */}
