@@ -14,6 +14,8 @@ import DetailDosen from "./pages/Public/detaildosen";
 
 import DashboardDosen from "./pages/dosen/DashboardDosen";
 import UpdateProfile from "./pages/UpdateProfile";
+import PublikasiKu from "./pages/dosen/PublikasiKu";
+import SinkronisasiPublikasi from "./pages/dosen/SinkronisasiPublikasi";
 
 function App() {
   return (
@@ -36,6 +38,8 @@ function App() {
       {/* <Route element={<ProtectedRoute allowedRoles={["Dosen"]} />}> */}
       <Route path="/dashboard/dosen" element={<DashboardDosen />} />
       <Route path="/update-profile" element={<UpdateProfile />} />
+      <Route path="/publikasi-ku" element={<PublikasiKu />} />
+      <Route path="/sinkronisasi-publikasi" element={<SinkronisasiPublikasi />} />
       {/* </Route> */}
     </Routes>
   );

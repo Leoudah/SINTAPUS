@@ -60,20 +60,23 @@ export const dosenPage = async (id) => {
 
 export const dosenPublicationsPage = async (id_dosen, page = 1) => {
   const offset = (page - 1) * 20;
-  const sql = ` 
-    SELECT 
+  const sql = `
+    SELECT
       p.id_publikasi,
       p.judul,
+      p.creator,
       p.tahun,
       p.link_publikasi,
-      p.jurnal
+      p.citation_count,
+      j.nama_jurnal as jurnal
     FROM penulis_publikasi pp
     LEFT JOIN publikasi p ON pp.id_publikasi = p.id_publikasi
     LEFT JOIN dosen d ON pp.id_dosen = d.id_dosen
+    LEFT JOIN jurnal j ON p.id_jurnal = j.id_jurnal
     WHERE d.id_dosen = ? AND p.is_public = 1
-    GROUP BY p.id_publikasi, p.judul, p.tahun, p.jurnal
+    GROUP BY p.id_publikasi, p.judul, p.creator, p.tahun, j.nama_jurnal
     ORDER BY p.tahun DESC
-    LIMIT 20;
+    LIMIT 20 OFFSET ?;
   `;
 
   const [rows] = await db.query(sql, [id_dosen, offset]);
@@ -106,14 +109,14 @@ export const dosenById = async (id_dosen) => {
   return rows[0] ?? null;
 };
 
-export const findDosenByName = async(name) => {
-    const query = `
+export const findDosenByName = async (name) => {
+  const query = `
       SELECT id_dosen, nama_dosen
       FROM dosen
       WHERE nama_dosen LIKE CONCAT('%', ?, '%')
       ORDER BY nama_dosen
       LIMIT 10;
     `;
-    const [rows] = await db.execute(query, [name]);
-    return rows[0];
+  const [rows] = await db.execute(query, [name]);
+  return rows[0];
 };

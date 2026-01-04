@@ -10,7 +10,7 @@ class SyncService {
   async syncScopusPublications(userId, scopusAuthorId) {
     const connection = await db.getConnection();
     let id_sinkron = null;
-    let stats = { total: 0, new: 0, updated: 0 };
+    let stats = { total: 0, new: 0, updated: 0, errors: 0 };
 
     try {
       const dosen = await dosenRepo.findByScopusID(scopusAuthorId);
@@ -70,34 +70,39 @@ class SyncService {
   }
 
   async processEntry(entry, dosen, stats, connection) {
-    const mappedData = this.mapScopusData(entry);
+    try {
+      const mappedData = this.mapScopusData(entry);
 
-    // Safety check
-    if (!mappedData.eid) return;
+      // Safety check
+      if (!mappedData.eid) return;
 
-    // FIX: Access 'creator' directly (stripped prefix)
-    const authorName = entry.creator || dosen.nama;
+      // FIX: Access 'creator' directly (stripped prefix)
+      const authorName = entry.creator || dosen.nama;
 
-    const journalId = await journalRepo.findOrCreate(
-      mappedData.journal_name,
-      mappedData.issn,
-      connection
-    );
-    mappedData.id_jurnal = journalId;
+      const journalId = await journalRepo.findOrCreate(
+        mappedData.journal_name,
+        mappedData.issn,
+        connection
+      );
+      mappedData.id_jurnal = journalId;
 
-    const existingPub = await publicationRepo.findByEid(mappedData.eid);
+      const existingPub = await publicationRepo.findByEid(mappedData.eid);
 
-    if (!existingPub) {
-      const newId = await publicationRepo.createPublication(mappedData, connection);
-      await publicationRepo.linkAuthor(newId, dosen.id_dosen, authorName, dosen.id_afiliasi, connection);
-      stats.new++;
-    } else {
-      const hasChanged = this.hasMetadataChanged(existingPub, mappedData);
-      if (hasChanged) {
-        await publicationRepo.updatePublication(existingPub.id_publikasi, mappedData, connection);
-        await publicationRepo.linkAuthor(existingPub.id_publikasi, dosen.id_dosen, authorName, dosen.id_afiliasi, connection);
-        stats.updated++;
+      if (!existingPub) {
+        const newId = await publicationRepo.createPublication(mappedData, connection);
+        await publicationRepo.linkAuthor(newId, dosen.id_dosen, authorName, dosen.id_afiliasi, connection);
+        stats.new++;
+      } else {
+        const hasChanged = this.hasMetadataChanged(existingPub, mappedData);
+        if (hasChanged) {
+          await publicationRepo.updatePublication(existingPub.id_publikasi, mappedData, connection);
+          await publicationRepo.linkAuthor(existingPub.id_publikasi, dosen.id_dosen, authorName, dosen.id_afiliasi, connection);
+          stats.updated++;
+        }
       }
+    } catch (error) {
+      console.error('Error processing entry:', error);
+      stats.errors++;
     }
   }
 

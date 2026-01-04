@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import NavbarPublik from "../../components/navbarpublik";
-import { fetchPublicDosenById } from "../../api/publik.api";
+import { fetchPublicDosenById, fetchPublicDosenPublications } from "../../api/publik.api";
 
 export default function DetailDosen() {
   const { id } = useParams();
   const [dosen, setDosen] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [publications, setPublications] = useState([]);
+  const [pubLoading, setPubLoading] = useState(false);
+  const [pubError, setPubError] = useState(null);
 
   useEffect(() => {
     const load = async () => {
@@ -26,6 +29,26 @@ export default function DetailDosen() {
 
     if (id) load();
   }, [id]);
+
+  useEffect(() => {
+    const loadPublications = async () => {
+      if (!dosen) return;
+
+      setPubLoading(true);
+      setPubError(null);
+      try {
+        const res = await fetchPublicDosenPublications(id);
+        const data = res?.data?.data ?? [];
+        setPublications(data);
+      } catch (err) {
+        setPubError('Gagal memuat publikasi dosen');
+      } finally {
+        setPubLoading(false);
+      }
+    };
+
+    loadPublications();
+  }, [dosen, id]);
 
   if (loading) return (
     <div>
@@ -100,10 +123,45 @@ export default function DetailDosen() {
           </div>
         </div>
 
-        {/* placeholder for publications list */}
+        {/* Publications List */}
         <div className="mt-6 bg-white rounded-lg shadow p-6">
           <h2 className="text-lg font-semibold mb-3">Publikasi</h2>
-          <p className="text-gray-600">Daftar publikasi belum tersedia — implementasi berikutnya.</p>
+
+          {pubLoading ? (
+            <p className="text-gray-600">Memuat publikasi...</p>
+          ) : pubError ? (
+            <p className="text-red-600">{pubError}</p>
+          ) : publications.length === 0 ? (
+            <p className="text-gray-600">Belum ada publikasi yang tersedia.</p>
+          ) : (
+            <div className="space-y-4">
+              {publications.map((pub) => (
+                <div key={pub.id_publikasi} className="border-b border-gray-200 pb-4 last:border-b-0">
+                  <h3 className="text-md font-medium text-blue-700 hover:text-blue-800">
+                    {pub.link_publikasi ? (
+                      <a href={pub.link_publikasi} target="_blank" rel="noopener noreferrer">
+                        {pub.judul}
+                      </a>
+                    ) : (
+                      pub.judul
+                    )}
+                  </h3>
+                  {pub.creator && (
+                    <div className="text-sm text-gray-500 mt-1">
+                      Oleh: {pub.creator}
+                    </div>
+                  )}
+                  <div className="text-sm text-gray-600 mt-1">
+                    <span className="font-medium">{pub.jurnal}</span>
+                    {pub.tahun && <span className="ml-2">• {pub.tahun}</span>}
+                    {pub.citation_count !== null && pub.citation_count !== undefined && (
+                      <span className="ml-2">• {pub.citation_count} sitasi</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

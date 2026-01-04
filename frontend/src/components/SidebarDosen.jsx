@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import {
   FiMenu,
   FiX,
@@ -10,6 +11,13 @@ import {
 
 function SidebarDosen({ logout }) {
   const [isOpen, setIsOpen] = useState(true);
+  const location = useLocation();
+
+  const menuItems = [
+    { icon: FiHome, label: 'Dashboard', path: '/dashboard/dosen' },
+    { icon: FiBookOpen, label: 'Publikasiku', path: '/publikasi-ku' },
+    { icon: FiRefreshCw, label: 'Sinkronisasi Publikasi', path: '/sinkronisasi-publikasi' },
+  ];
 
   return (
     <div
@@ -35,15 +43,12 @@ function SidebarDosen({ logout }) {
 
       {/* Menu */}
       <ul className="flex-1 mt-4 space-y-2">
-        {[
-          { icon: FiHome, label: 'Dashboard' },
-          { icon: FiBookOpen, label: 'Publikasiku' },
-          { icon: FiRefreshCw, label: 'Sinkronisasi Publikasi' },
-        ].map(({ icon: Icon, label }) => (
+        {menuItems.map(({ icon: Icon, label, path }) => (
           <li key={label}>
-            <a
-              href="#"
-              className="h-12 px-5 flex items-center gap-3 hover:bg-gray-700 transition-colors"
+            <Link
+              to={path}
+              className={`h-12 px-5 flex items-center gap-3 hover:bg-gray-700 transition-colors block ${location.pathname === path ? 'bg-gray-700' : ''
+                }`}
             >
               <Icon size={20} className="min-w-[20px]" />
               <span
@@ -52,7 +57,7 @@ function SidebarDosen({ logout }) {
               >
                 {label}
               </span>
-            </a>
+            </Link>
           </li>
         ))}
       </ul>
