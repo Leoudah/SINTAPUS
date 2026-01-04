@@ -24,3 +24,10 @@ export const authorizeAdmin = (req, res, next) => {
   }
   next();
 };
+
+export const authorizeDosen = (req, res, next) => {
+  if (!req.user || req.user.role !== 'Dosen') {
+    return res.status(403).json({ message: 'Dosen only' });
+  }
+  next();
+};

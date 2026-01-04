@@ -12,27 +12,11 @@ export const registerDosen = async ({ email, password, nama, nidn, afiliasi, sco
   // 2. Hash password
   const passwordHash = await bcrypt.hash(password, 10);
 
-  // 2,1. Find Cetizenship
-  const [countryRows] = await db.query(
-    `SELECT id FROM countries WHERE name = ? LIMIT 1`,
-    [citizenship]
-  );
-
-  const id_citizenship = countryRows[0].id;
-
-    // 2,2. Find Afiliasi
-  const [afiliasiRows] = await db.query(
-    `SELECT id_afiliasi FROM afiliasi WHERE institusi = ? LIMIT 1`,
-    [afiliasi]
-  );
-  
-  const id_afiliasi = afiliasiRows[0].id_afiliasi;
-
   // 3. Insert dosen
   const [dosenResult] = await db.query(
     `INSERT INTO dosen (nama, nidn, scopus_author_id, id_afiliasi, citizenship, created_at, updated_at)
      VALUES (?, ?, ?, ?, ?, NOW(), NOW())`,
-    [nama, nidn, scopus_author_id, id_afiliasi, id_citizenship]
+    [nama, nidn, scopus_author_id, afiliasi, citizenship]
   );
 
   const idDosen = dosenResult.insertId;

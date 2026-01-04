@@ -16,3 +16,13 @@ export const getDosenPublicationsPage = async (id_dosen, page) => {
   return publicRepo.dosenPublicationsPage(id_dosen, page);
 }
 
+export const getCountries = async () => {
+  const [rows] = await db.query('SELECT id, name FROM countries ORDER BY name');
+  return rows;
+};
+
+export const getAfiliasi = async () => {
+  const [rows] = await db.query('SELECT id_afiliasi, institusi FROM afiliasi ORDER BY institusi');
+  return rows;
+};
+

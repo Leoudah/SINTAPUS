@@ -8,21 +8,21 @@ export const getDosenCards = async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ success: false, message: 'Server error' });
-    }  
+    }
 };
 
 export const getDosenDetail = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const dosen = await publicService.getDosenDetail(id);
-    if (!dosen) {
-      return res.status(404).json({ success: false, message: 'Dosen not found' });
+    try {
+        const id = req.params.id;
+        const dosen = await publicService.getDosenDetail(id);
+        if (!dosen) {
+            return res.status(404).json({ success: false, message: 'Dosen not found' });
+        }
+        res.json({ success: true, data: dosen });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: 'Server error' });
     }
-    res.json({ success: true, data: dosen });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: 'Server error' });
-  }
 };
 
 export const getDosenPage = async (req, res) => {
@@ -45,5 +45,25 @@ export const getDosenPublicationsPage = async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ success: false, message: 'Server error' });
-    }   
+    }
+};
+
+export const getCountries = async (req, res) => {
+    try {
+        const countries = await publicService.getCountries();
+        res.json({ success: true, data: countries });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+export const getAfiliasi = async (req, res) => {
+    try {
+        const afiliasi = await publicService.getAfiliasi();
+        res.json({ success: true, data: afiliasi });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
 };

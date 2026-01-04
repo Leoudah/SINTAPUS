@@ -1,7 +1,7 @@
 import db from '../config/database.js';
 import elsevierService from '../integrations/elsevier.service.js';
 import publicationRepo from '../repositories/publication.repository.js';
-import dosenRepo from '../repositories/dosen.repository.js';
+import * as dosenRepo from '../repositories/dosen.repository.js';
 import syncRepo from '../repositories/sync.repository.js';
 import journalRepo from '../repositories/journal.repository.js';
 
@@ -13,7 +13,7 @@ class SyncService {
     let stats = { total: 0, new: 0, updated: 0 };
 
     try {
-      const dosen = await dosenRepo.findByScopusId(scopusAuthorId);
+      const dosen = await dosenRepo.findByScopusID(scopusAuthorId);
       if (!dosen) throw new Error(`Dosen with Scopus ID ${scopusAuthorId} not found.`);
 
       await connection.beginTransaction();

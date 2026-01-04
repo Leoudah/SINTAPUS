@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { registerDosen } from "../api/auth.api";
 import { useNavigate } from "react-router-dom";
 import backgroundImg from '../assets/unudtanda.png';
+import api from "../api/axios.api";
+import { LuEye, LuEyeOff } from 'react-icons/lu';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -9,12 +11,36 @@ export default function Register() {
   const [form, setForm] = useState({
     email: "",
     password: "",
+    confirmPassword: "",
     nama: "",
     nidn: "",
-    id_card: "",
+    afiliasi: "",
+    scopus_author_id: "",
     citizenship: "",
-    id_afiliasi: "",
   });
+
+  const [displayCitizenship, setDisplayCitizenship] = useState("");
+  const [displayAfiliasi, setDisplayAfiliasi] = useState("");
+  const [countries, setCountries] = useState([]);
+  const [afiliasiList, setAfiliasiList] = useState([]);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [countriesRes, afiliasiRes] = await Promise.all([
+          api.get("/public/countries"),
+          api.get("/public/afiliasi")
+        ]);
+        setCountries(countriesRes.data.data);
+        setAfiliasiList(afiliasiRes.data.data);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleChange = (e) => {
     setForm({
@@ -23,8 +49,34 @@ export default function Register() {
     });
   };
 
+  const handleCitizenshipChange = (e) => {
+    const value = e.target.value;
+    setDisplayCitizenship(value);
+    const country = countries.find(c => c.name === value);
+    if (country) {
+      setForm({ ...form, citizenship: country.id });
+    } else {
+      setForm({ ...form, citizenship: "" });
+    }
+  };
+
+  const handleAfiliasiChange = (e) => {
+    const value = e.target.value;
+    setDisplayAfiliasi(value);
+    const afiliasi = afiliasiList.find(a => a.institusi === value);
+    if (afiliasi) {
+      setForm({ ...form, afiliasi: afiliasi.id_afiliasi });
+    } else {
+      setForm({ ...form, afiliasi: "" });
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (form.password !== form.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
     try {
       const res = await registerDosen(form);
       alert(res.message);
@@ -61,14 +113,45 @@ export default function Register() {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Password
             </label>
-            <input
-              name="password"
-              type="password"
-              onChange={handleChange}
-              placeholder="••••••••"
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              required
-            />
+            <div className="relative">
+              <input
+                name="password"
+                type={showPassword ? "text" : "password"}
+                onChange={handleChange}
+                placeholder="••••••••"
+                className="w-full px-4 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+              >
+                {showPassword ? <LuEyeOff size={20} /> : <LuEye size={20} />}
+              </button>
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Confirm Password
+            </label>
+            <div className="relative">
+              <input
+                name="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                onChange={handleChange}
+                placeholder="••••••••"
+                className="w-full px-4 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+              >
+                {showConfirmPassword ? <LuEyeOff size={20} /> : <LuEye size={20} />}
+              </button>
+            </div>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -96,39 +179,51 @@ export default function Register() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              ID Card
+              Scopus Author ID
             </label>
             <input
-              name="id_card"
+              name="scopus_author_id"
               onChange={handleChange}
-              placeholder="ID Card"
+              placeholder="Scopus Author ID"
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               required
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Citizenship ID
+              Citizenship
             </label>
             <input
-              name="citizenship"
-              onChange={handleChange}
-              placeholder="Citizenship ID"
+              list="countries"
+              value={displayCitizenship}
+              onChange={handleCitizenshipChange}
+              placeholder="e.g., Indonesia"
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               required
             />
+            <datalist id="countries">
+              {countries.map(country => (
+                <option key={country.id} value={country.name} />
+              ))}
+            </datalist>
           </div>
-          <div className="col-span-2 flex flex-col items-center">
+          <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Afiliasi ID
+              Afiliasi
             </label>
             <input
-              name="id_afiliasi"
-              onChange={handleChange}
-              placeholder="Afiliasi ID"
+              list="afiliasi"
+              value={displayAfiliasi}
+              onChange={handleAfiliasiChange}
+              placeholder="Nama Institusi"
               className="w-full max-w-xs px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               required
             />
+            <datalist id="afiliasi">
+              {afiliasiList.map(afiliasi => (
+                <option key={afiliasi.id_afiliasi} value={afiliasi.institusi} />
+              ))}
+            </datalist>
           </div>
           <button
             type="submit"

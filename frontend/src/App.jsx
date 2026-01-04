@@ -13,29 +13,31 @@ import Afiliasi from "./pages/Public/afiliasi";
 import DetailDosen from "./pages/Public/detaildosen";
 
 import DashboardDosen from "./pages/dosen/DashboardDosen";
+import UpdateProfile from "./pages/UpdateProfile";
 
 function App() {
   return (
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        
-        <Route path="/Testing" element={<Testing />} />
-        <Route path="/dosenpublik" element={<DosenPublik />} />
-        <Route path="/afiliasi" element={<Afiliasi />} />
-        <Route path="/detaildosen/:id" element={<DetailDosen />} />
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
 
-        {/* Command Jangan Dihapus */}
-        {/* <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}> */}
-          <Route path="/dashboard/admin" element={<DashboardAdmin />} />
-          <Route path="/dashboard/admin/manage" element={<ManageAccount />} />
-        {/* </Route> */}
+      <Route path="/Testing" element={<Testing />} />
+      <Route path="/dosenpublik" element={<DosenPublik />} />
+      <Route path="/afiliasi" element={<Afiliasi />} />
+      <Route path="/detaildosen/:id" element={<DetailDosen />} />
 
-        {/* <Route element={<ProtectedRoute allowedRoles={["Dosen"]} />}> */}
-          <Route path="/dashboard/dosen" element={<DashboardDosen />} />
-        {/* </Route> */}
-      </Routes>
+      {/* Command Jangan Dihapus */}
+      {/* <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}> */}
+      <Route path="/dashboard/admin" element={<DashboardAdmin />} />
+      <Route path="/dashboard/admin/manage" element={<ManageAccount />} />
+      {/* </Route> */}
+
+      {/* <Route element={<ProtectedRoute allowedRoles={["Dosen"]} />}> */}
+      <Route path="/dashboard/dosen" element={<DashboardDosen />} />
+      <Route path="/update-profile" element={<UpdateProfile />} />
+      {/* </Route> */}
+    </Routes>
   );
 }
 

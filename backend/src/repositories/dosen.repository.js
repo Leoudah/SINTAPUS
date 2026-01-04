@@ -41,6 +41,21 @@ import db from '../config/database.js';
     return result;
   }
 
+  //INSERT INTO `jurnal` (`id_jurnal`, `nama_jurnal`, `issn`, `publisher`, `quartile`)
+  //INSERT INTO `publikasi` (`id_publikasi`, `eid`, `doi`, `judul`, `creator`, `tahun`, `jenis`, `link_publikasi`, `citation_count`, `id_jurnal`, `status`, `is_public`, `verified_by`, `verified_at`, `verification_note`, `created_at`) VALUES
+  export const findMyPublications = async(id_dosen) => {
+    const query = `
+      SELECT p.id_publikasi, p.judul, p.tahun, p.doi, p.creator, p.link_publikasi, j.nama_jurnal
+      FROM publikasi p
+      JOIN penulis_publikasi pp ON p.id_publikasi = pp.id_publikasi
+      JOIN jurnal j ON p.id_jurnal = j.id_jurnal
+      WHERE pp.id_dosen = ?
+      ORDER BY p.tahun DESC
+    `;
+    const [rows] = await db.execute(query, [id_dosen]);
+    return rows;
+  }
+
 
 //KALAU SEMPAT NGERJAIN YANG INI
 

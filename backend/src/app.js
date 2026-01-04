@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import apiRoutes from "./routes/api.routes.js";
 import publicRoutes from "./routes/public.routes.js";
+import dosenRoutes from "./routes/dosen.routes.js";
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use("/api/admin", adminRoutes);
 app.use("/api/public", publicRoutes);
+app.use("/api/dosen", dosenRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api", apiRoutes);
 
