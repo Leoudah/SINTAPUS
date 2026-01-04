@@ -105,3 +105,15 @@ export const dosenById = async (id_dosen) => {
   const [rows] = await db.query(sql, [id_dosen, id_dosen]);
   return rows[0] ?? null;
 };
+
+export const findDosenByName = async(name) => {
+    const query = `
+      SELECT id_dosen, nama_dosen
+      FROM dosen
+      WHERE nama_dosen LIKE CONCAT('%', ?, '%')
+      ORDER BY nama_dosen
+      LIMIT 10;
+    `;
+    const [rows] = await db.execute(query, [name]);
+    return rows[0];
+};
