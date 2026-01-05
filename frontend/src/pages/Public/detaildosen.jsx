@@ -84,6 +84,10 @@ export default function DetailDosen() {
     return [];
   })();
 
+  // Filter publications to only include those that are verified and public
+  const filteredPublications = publications;
+
+
   return (
     <div>
       <NavbarPublik />
@@ -131,11 +135,11 @@ export default function DetailDosen() {
             <p className="text-gray-600">Memuat publikasi...</p>
           ) : pubError ? (
             <p className="text-red-600">{pubError}</p>
-          ) : publications.length === 0 ? (
+          ) : filteredPublications.length === 0 ? (
             <p className="text-gray-600">Belum ada publikasi yang tersedia.</p>
           ) : (
             <div className="space-y-4">
-              {publications.map((pub) => (
+              {filteredPublications.map((pub) => (
                 <div key={pub.id_publikasi} className="border-b border-gray-200 pb-4 last:border-b-0">
                   <h3 className="text-md font-medium text-blue-700 hover:text-blue-800">
                     {pub.link_publikasi ? (

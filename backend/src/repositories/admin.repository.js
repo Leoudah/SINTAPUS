@@ -78,8 +78,7 @@ export const findById = async (id) => {
       d.id_dosen,
       d.nama,
       d.nidn,
-      d.scopus_author_id,
-      d.bio_singkat
+      d.scopus_author_id
     FROM user u
     LEFT JOIN dosen d ON u.id_dosen = d.id_dosen
     WHERE u.id_user = ?

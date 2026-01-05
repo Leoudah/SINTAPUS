@@ -7,10 +7,12 @@ import Register from "./pages/Register";
 
 import DashboardAdmin from "./pages/admin/admin";
 import ManageAccount from "./pages/admin/manageAccount";
+import ManagePublikasi from "./pages/admin/managePublication";
 import Testing from "./pages/Public/Testings";
 import DosenPublik from "./pages/Public/dosenpublik";
 import Afiliasi from "./pages/Public/afiliasi";
 import DetailDosen from "./pages/Public/detaildosen";
+
 
 import DashboardDosen from "./pages/dosen/DashboardDosen";
 import UpdateProfile from "./pages/UpdateProfile";
@@ -33,6 +35,7 @@ function App() {
       {/* <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}> */}
       <Route path="/dashboard/admin" element={<DashboardAdmin />} />
       <Route path="/dashboard/admin/manage" element={<ManageAccount />} />
+      <Route path="/dashboard/admin/publikasi" element={<ManagePublikasi />} />
       {/* </Route> */}
 
       {/* <Route element={<ProtectedRoute allowedRoles={["Dosen"]} />}> */}

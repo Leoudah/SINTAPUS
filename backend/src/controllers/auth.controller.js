@@ -6,7 +6,7 @@ import multer from "multer";
 import path from "path";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { updateProfile, findMyPublications } from "../repositories/dosen.repository.js";
+import { updateProfile, findMyPublications, togglePublicationStatus } from "../repositories/dosen.repository.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -155,6 +155,40 @@ export const getMyPublications = async (req, res) => {
     const publications = await findMyPublications(user.id_dosen);
 
     res.json({ publications });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// TOGGLE PUBLICATION STATUS
+export const togglePublicationStatusController = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'No token' });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id_user;
+
+    const [userRows] = await db.query('SELECT * FROM user WHERE id_user = ?', [userId]);
+    if (userRows.length === 0) return res.status(404).json({ message: 'User not found' });
+
+    const user = userRows[0];
+    const { id } = req.params;
+    const { is_public } = req.body;
+
+    // Check if the publication belongs to the user
+    const [pubRows] = await db.query(`
+      SELECT p.id_publikasi
+      FROM publikasi p
+      JOIN penulis_publikasi pp ON p.id_publikasi = pp.id_publikasi
+      WHERE p.id_publikasi = ? AND pp.id_dosen = ?
+    `, [id, user.id_dosen]);
+
+    if (pubRows.length === 0) return res.status(403).json({ message: 'Unauthorized to modify this publication' });
+
+    await togglePublicationStatus(id, is_public);
+
+    res.json({ message: 'Status updated successfully', is_public });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

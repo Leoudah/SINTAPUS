@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { updateAccountStatus } from "../api/admin.api";
+import { updateAccountStatus, updatePublicationStatus } from "../api/admin.api";
 import { useLogout } from "../hooks/userLogout";
 
-export default function VerifyModal({ id, onClose, onSuccess }) {
+export default function VerifyModal({ id, onClose, onSuccess, type = "account" }) {
   const [status, setStatus] = useState("verified");
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
@@ -12,13 +12,14 @@ export default function VerifyModal({ id, onClose, onSuccess }) {
   const submit = async () => {
     setLoading(true);
     try {
-      await updateAccountStatus(id, {
+      const updateFunction = type === "publication" ? updatePublicationStatus : updateAccountStatus;
+      await updateFunction(id, {
         status,
         verification_note: note || null,
       });
 
       onClose();
-      onSuccess();
+      if (onSuccess) onSuccess();
     } catch (err) {
       if (err.response?.status === 401 || err.response?.status === 403) {
         logout();
@@ -36,7 +37,7 @@ export default function VerifyModal({ id, onClose, onSuccess }) {
         {/* Header */}
         <div className="px-6 py-4 border-b">
           <h3 className="text-lg font-semibold text-gray-800">
-            Verifikasi Akun
+            {type === "publication" ? "Verifikasi Publikasi" : "Verifikasi Akun"}
           </h3>
         </div>
 
@@ -83,11 +84,10 @@ export default function VerifyModal({ id, onClose, onSuccess }) {
           <button
             onClick={submit}
             disabled={loading}
-            className={`px-4 py-2 text-sm rounded-md text-white ${
-              status === "rejected"
+            className={`px-4 py-2 text-sm rounded-md text-white ${status === "rejected"
                 ? "bg-red-600 hover:bg-red-700"
                 : "bg-blue-600 hover:bg-blue-700"
-            } disabled:opacity-50`}
+              } disabled:opacity-50`}
           >
             {loading ? "Menyimpan..." : "Submit"}
           </button>

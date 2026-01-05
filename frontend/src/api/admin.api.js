@@ -16,3 +16,20 @@ export const fetchAccountDetail = (id) => {
 export const updateAccountStatus = (id, payload) => {
   return api.put(`/admin/accounts/${id}/status`, payload);
 };
+
+// detail publikasi
+export const fetchPublicationDetail = (id) => {
+  return api.get(`/admin/publications/${id}`);
+};
+
+// update status publikasi
+export const updatePublicationStatus = (id, payload) => {
+  return api.put(`/admin/publications/${id}/status`, payload);
+};
+
+// Fetch publications with optional status filter
+export const fetchPublications = (status) => {
+  return api.get("/admin/publications", {
+    params: { status },
+  });
+};

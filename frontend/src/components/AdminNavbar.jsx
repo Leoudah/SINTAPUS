@@ -15,6 +15,7 @@ const logout = useLogout();
         <div className="flex items-center gap-4">
           <Link to="/dashboard/admin" className={linkClass("/dashboard/admin")}>Overview</Link>
           <Link to="/dashboard/admin/manage" className={linkClass("/dashboard/admin/manage")}>Manage Akun</Link>
+          <Link to="/dashboard/admin/publikasi" className={linkClass("/dashboard/admin/publikasi")}>Manage Publikasi</Link>
         </div>
 
         <div>

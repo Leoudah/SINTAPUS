@@ -73,7 +73,7 @@ export const dosenPublicationsPage = async (id_dosen, page = 1) => {
     LEFT JOIN publikasi p ON pp.id_publikasi = p.id_publikasi
     LEFT JOIN dosen d ON pp.id_dosen = d.id_dosen
     LEFT JOIN jurnal j ON p.id_jurnal = j.id_jurnal
-    WHERE d.id_dosen = ? AND p.is_public = 1
+    WHERE d.id_dosen = ? AND p.is_public = 1 AND p.status = 'verified'
     GROUP BY p.id_publikasi, p.judul, p.creator, p.tahun, j.nama_jurnal
     ORDER BY p.tahun DESC
     LIMIT 20 OFFSET ?;
