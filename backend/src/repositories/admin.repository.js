@@ -114,6 +114,8 @@ export const findAllPublications = async (status) => {
       p.judul,
       p.tahun,
       p.jenis,
+      p.creator,
+      d.nama AS nama_dosen,
       p.link_publikasi,
       p.citation_count,
       p.id_jurnal,
@@ -128,6 +130,7 @@ export const findAllPublications = async (status) => {
     FROM publikasi p
     LEFT JOIN jurnal j ON p.id_jurnal = j.id_jurnal
     LEFT JOIN penulis_publikasi pp ON p.id_publikasi = pp.id_publikasi
+    LEFT JOIN dosen d ON p.creator = d.id_dosen
     WHERE 1=1
   `;
 
