@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import NavbarPublik from "../../components/navbarpublik";
 import { fetchAccountDetail } from "../../api/publik.api";
 import { Link } from "react-router-dom";
@@ -9,9 +9,7 @@ export default function DosenPublik() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [meta, setMeta] = useState({});
-
   const [q, setQ] = useState("");
-  const [sort, setSort] = useState("");
 
   const loadPage = async (p = 1, qSearch = "") => {
     setLoading(true);
@@ -36,19 +34,6 @@ export default function DosenPublik() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, q]);
 
-  const filtered = useMemo(() => {
-    const base = Array.isArray(dosens) ? dosens : [];
-    let list = [...base];
-
-    if (sort === "sinta3") {
-      list.sort((a, b) => (b.sinta_score_3yr || b.sinta3 || 0) - (a.sinta_score_3yr || a.sinta3 || 0));
-    } else if (sort === "sintaOverall") {
-      list.sort((a, b) => (b.sinta_score_overall || b.sintaOverall || 0) - (a.sinta_score_overall || a.sintaOverall || 0));
-    }
-
-    return list;
-  }, [dosens, sort]);
-
   const totalPages = meta?.last_page || (meta?.total && meta?.per_page ? Math.ceil(meta.total / meta.per_page) : undefined);
   const totalRecords = meta.total;
 
@@ -70,36 +55,33 @@ export default function DosenPublik() {
     <div>
       <NavbarPublik />
       <div className="max-w-7xl mx-auto p-6">
+
+        <div className="flex items-center justify-between mb-4">
         <h1 className="text-3xl font-bold mb-4">Dosen Publik</h1>
+        <div className="text-sm text-gray-600">{totalRecords ? `Page ${page} of ${totalPages ?? '?'} | Total ${totalRecords}` : ''}</div>
+        </div>
 
         <div className="bg-white p-4 rounded shadow mb-4">
           <div className="flex gap-4 items-center">
-            <div className="flex-1 md:flex md:items-center md:gap-4">
-              <select value={sort} onChange={(e) => setSort(e.target.value)} className="px-3 py-2 border rounded w-full md:w-64">
-                <option value="">Urutkan</option>
-                <option value="sintaOverall">Sinta Score Overall (desc)</option>
-              </select>
-              <input
-                value={q}
-                onChange={(e) => {
-                  setPage(1);
-                  setQ(e.target.value);
-                }}
-                placeholder="Search..."
-                className="mt-2 md:mt-0 w-full md:w-1/2 px-3 py-2 border rounded"
-              />
-            </div>
-            <div className="text-sm text-gray-600">{totalRecords ? `Page ${page} of ${totalPages ?? '?'} | Total Records ${totalRecords}` : ''}</div>
+            <input
+              value={q}
+              onChange={(e) => {
+                setPage(1);
+                setQ(e.target.value);
+              }}
+              placeholder="Search..."
+              className="w-full md:w-1/2 px-3 py-2 border rounded"
+            />
           </div>
         </div>
 
         {loading && <div className="text-gray-600">Memuat...</div>}
         {error && <div className="text-red-600 mb-4">{error}</div>}
 
-        {!loading && filtered.length === 0 && <p className="text-gray-700">Tidak ada data dosen.</p>}
+        {!loading && dosens.length === 0 && <p className="text-gray-700">Tidak ada data dosen.</p>}
 
         <div className="space-y-6">
-          {filtered.map((d) => {
+          {dosens.map((d) => {
             // map API fields to UI
             const name = d.nama || d.name || d.fullname || "-";
             const affiliation = d.institusi || d.instansi || d.afiliasi || "-";

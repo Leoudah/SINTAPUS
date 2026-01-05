@@ -8,7 +8,10 @@ import {
     FiBook,
     FiFileText,
     FiToggleLeft,
-    FiToggleRight
+    FiToggleRight,
+    FiAlertCircle,
+    FiCheckCircle,
+    FiXCircle
 } from 'react-icons/fi';
 
 function PublikasiKu() {
@@ -161,7 +164,7 @@ function PublikasiKu() {
                                         )}
                                     </div>
 
-                                    <div className="flex items-center gap-4">
+                                    <div className="flex items-center gap-4 mb-3">
                                         <span>Status: {pub.is_public === 1 ? 'Public' : 'Private'}</span>
                                         <button
                                             onClick={() => togglePublicationStatus(pub.id_publikasi, pub.is_public)}
@@ -170,6 +173,43 @@ function PublikasiKu() {
                                             {pub.is_public === 1 ? <FiToggleRight size={20} /> : <FiToggleLeft size={20} />} Toggle
                                         </button>
                                     </div>
+
+                                    {/* Verification Status & Note */}
+                                    {pub.status && (
+                                        <div className={`mb-3 p-3 rounded-lg flex items-start gap-2 ${
+                                            pub.status === 'verified' ? 'bg-green-50 border border-green-200' :
+                                            pub.status === 'rejected' ? 'bg-red-50 border border-red-200' :
+                                            'bg-yellow-50 border border-yellow-200'
+                                        }`}>
+                                            {pub.status === 'verified' && <FiCheckCircle className="text-green-600 mt-0.5 flex-shrink-0" size={18} />}
+                                            {pub.status === 'rejected' && <FiXCircle className="text-red-600 mt-0.5 flex-shrink-0" size={18} />}
+                                            {(pub.status === 'draft' || pub.status === 'submitted') && <FiAlertCircle className="text-yellow-600 mt-0.5 flex-shrink-0" size={18} />}
+                                            
+                                            <div className="flex-1">
+                                                <p className={`font-semibold text-sm mb-1 ${
+                                                    pub.status === 'verified' ? 'text-green-800' :
+                                                    pub.status === 'rejected' ? 'text-red-800' :
+                                                    'text-yellow-800'
+                                                }`}>
+                                                    Status Verifikasi: {
+                                                        pub.status === 'verified' ? 'Terverifikasi' :
+                                                        pub.status === 'rejected' ? 'Ditolak' :
+                                                        pub.status === 'submitted' ? 'Menunggu Verifikasi' :
+                                                        'Draft'
+                                                    }
+                                                </p>
+                                                {pub.verification_note && (
+                                                    <p className={`text-sm ${
+                                                        pub.status === 'verified' ? 'text-green-700' :
+                                                        pub.status === 'rejected' ? 'text-red-700' :
+                                                        'text-yellow-700'
+                                                    }`}>
+                                                        <strong>Catatan:</strong> {pub.verification_note}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
 
                                     <div className="border-t pt-4">
                                         <div className="flex justify-between items-center text-sm text-gray-600">

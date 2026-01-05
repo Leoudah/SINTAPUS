@@ -10,3 +10,7 @@ export const updateDosenProfile = async (id_dosen, profileData) => {
 export const getDosenPublications = async (id_dosen) => {
   return await dosenRepo.findMyPublications(id_dosen);
 }
+
+export const getPublicationStats = async (id_dosen) => {
+  return await dosenRepo.getPublicationStats(id_dosen);
+};

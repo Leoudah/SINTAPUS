@@ -45,7 +45,7 @@ export const updateProfile = async (id_dosen, profileData) => {
 //INSERT INTO `publikasi` (`id_publikasi`, `eid`, `doi`, `judul`, `creator`, `tahun`, `jenis`, `link_publikasi`, `citation_count`, `id_jurnal`, `status`, `is_public`, `verified_by`, `verified_at`, `verification_note`, `created_at`) VALUES
 export const findMyPublications = async (id_dosen) => {
   const query = `
-      SELECT p.id_publikasi, p.judul, p.tahun, p.doi, p.creator, p.link_publikasi, p.citation_count, p.is_public, j.nama_jurnal
+      SELECT p.id_publikasi, p.judul, p.tahun, p.doi, p.creator, p.link_publikasi, p.citation_count, p.is_public, p.status, p.verification_note, j.nama_jurnal
       FROM publikasi p
       JOIN penulis_publikasi pp ON p.id_publikasi = pp.id_publikasi
       JOIN jurnal j ON p.id_jurnal = j.id_jurnal
@@ -108,3 +108,18 @@ export const togglePublicationStatus = async (id_publikasi, is_public) => {
   return result;
 };
 
+export const getPublicationStats = async (id_dosen) => {
+  const query = `
+    SELECT 
+      COUNT(*) as total,
+      SUM(CASE WHEN p.is_public = 0 THEN 1 ELSE 0 END) as hidden,
+      SUM(CASE WHEN p.is_public = 1 THEN 1 ELSE 0 END) as public,
+      SUM(CASE WHEN p.status = 'verified' THEN 1 ELSE 0 END) as verified,
+      SUM(CASE WHEN p.status = 'rejected' THEN 1 ELSE 0 END) as rejected
+    FROM publikasi p
+    JOIN penulis_publikasi pp ON p.id_publikasi = pp.id_publikasi
+    WHERE pp.id_dosen = ?
+  `;
+  const [rows] = await db.execute(query, [id_dosen]);
+  return rows[0];
+};

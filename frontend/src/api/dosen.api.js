@@ -1,3 +1,9 @@
+import api from "./axios.api";
+
+export const getPublicationStats = (id_dosen) => {
+  return api.get(`/dosen/${id_dosen}/stats`);
+};
+
 export const getAllDosen = async () => {
   const res = await fetch("/api/dosen");
   return res.json();

@@ -8,9 +8,9 @@ export const getDosenByScopusID = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Dosen not found' });
     }
     res.json({ success: true, data: dosen });
-    } catch (err) {
+  } catch (err) {
     res.status(500).json({ success: false, message: err.message });
-    }  
+  }
 };
 
 export const updateDosenProfile = async (req, res) => {
@@ -31,5 +31,15 @@ export const getDosenPublications = async (req, res) => {
     res.json({ success: true, data: publications });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
-  } 
+  }
+};
+
+export const getPublicationStats = async (req, res) => {
+  try {
+    const { id_dosen } = req.params;
+    const stats = await dosenService.getPublicationStats(id_dosen);
+    res.json({ success: true, data: stats });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
 };

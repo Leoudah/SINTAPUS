@@ -90,6 +90,7 @@ export const getProfile = async (req, res) => {
     }
 
     res.json({
+      id_dosen: user.id_dosen,
       nama: dosen.nama,
       foto_profil: dosen.foto_profil,
       scopus_author_id: dosen.scopus_author_id,
