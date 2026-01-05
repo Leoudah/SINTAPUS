@@ -10,7 +10,8 @@ export default function PublicationTable({ publications, onUpdate }) {
                     <thead className="bg-gray-100 text-gray-700">
                         <tr>
                             <th className="px-4 py-2 text-left">Judul</th>
-                            <th className="px-4 py-2 text-left">Dosen</th>
+                            <th className="px-4 py-2 text-left">Creator</th>
+                            <th className="px-4 py-2 text-left">Sync By</th>
                             <th className="px-4 py-2 text-left">Status</th>
                             <th className="px-4 py-2 text-left">Aksi</th>
                         </tr>
@@ -30,6 +31,7 @@ export default function PublicationTable({ publications, onUpdate }) {
                             <tr key={row.id_publikasi} className="hover:bg-gray-50">
                                 <td className="px-4 py-3">{row.judul}</td>
                                 <td className="px-4 py-3">{row.creator}</td>
+                                <td className="px-4 py-3">{row.nama_dosen || "-"}</td>
                                 <td className="px-4 py-3">{row.status}</td>
                                 <td className="px-4 py-3 text-center">
                                     <button

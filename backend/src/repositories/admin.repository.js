@@ -46,7 +46,8 @@ export const findAll = async (status) => {
       u.verification_note,
       u.created_at,
       d.nama,
-      d.nidn
+      d.nidn,
+      d.scopus_author_id
     FROM user u
     LEFT JOIN dosen d ON u.id_dosen = d.id_dosen
     WHERE u.role = 'Dosen'
@@ -115,7 +116,8 @@ export const findAllPublications = async (status) => {
       p.tahun,
       p.jenis,
       p.creator,
-      d.nama AS nama_dosen,
+      /* Used MAX() to pick one name if multiple exist, prevents Only_Full_Group_By error */
+      MAX(d.nama) AS nama_dosen, 
       p.link_publikasi,
       p.citation_count,
       p.id_jurnal,
@@ -126,11 +128,12 @@ export const findAllPublications = async (status) => {
       p.verified_at,
       p.verification_note,
       p.created_at,
+      /* Aggregating authors into one string */
       GROUP_CONCAT(CONCAT(pp.urutan,':',pp.nama_penulis) ORDER BY pp.urutan SEPARATOR '||') AS penulis
     FROM publikasi p
     LEFT JOIN jurnal j ON p.id_jurnal = j.id_jurnal
     LEFT JOIN penulis_publikasi pp ON p.id_publikasi = pp.id_publikasi
-    LEFT JOIN dosen d ON p.creator = d.id_dosen
+    LEFT JOIN dosen d ON pp.id_dosen = d.id_dosen
     WHERE 1=1
   `;
 
@@ -158,6 +161,7 @@ export const findPublicationById = async (id) => {
       p.jenis,
       p.link_publikasi,
       p.citation_count,
+      MAX(d.nama) AS nama_dosen, 
       p.id_jurnal,
       j.nama_jurnal,
       p.status,
@@ -170,8 +174,8 @@ export const findPublicationById = async (id) => {
     FROM publikasi p
     LEFT JOIN jurnal j ON p.id_jurnal = j.id_jurnal
     LEFT JOIN penulis_publikasi pp ON p.id_publikasi = pp.id_publikasi
+    LEFT JOIN dosen d ON pp.id_dosen = d.id_dosen
     WHERE p.id_publikasi = ?
-    GROUP BY p.id_publikasi
     `,
     [id]
   );

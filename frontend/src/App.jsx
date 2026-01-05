@@ -12,6 +12,7 @@ import Testing from "./pages/Public/Testings";
 import DosenPublik from "./pages/Public/dosenpublik";
 import Afiliasi from "./pages/Public/afiliasi";
 import DetailDosen from "./pages/Public/detaildosen";
+import DetailAffiliasi from "./pages/Public/DetailAffiliasi";
 
 
 import DashboardDosen from "./pages/dosen/DashboardDosen";
@@ -30,6 +31,7 @@ function App() {
       <Route path="/dosenpublik" element={<DosenPublik />} />
       <Route path="/afiliasi" element={<Afiliasi />} />
       <Route path="/detaildosen/:id" element={<DetailDosen />} />
+      <Route path="/detailafiliasi/:id" element={<DetailAffiliasi />} />
 
       {/* Command Jangan Dihapus */}
       {/* <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}> */}

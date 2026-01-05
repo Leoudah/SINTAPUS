@@ -1,8 +1,21 @@
 import db from "../config/database.js";
 import * as publicRepo from '../repositories/public.repository.js';
+import { DOSEN_PER_PAGE, AFILIASI_PER_PAGE } from '../repositories/public.repository.js';
 
-export const getDosenCards = async (page) => {
-  return publicRepo.dosenCard(page);
+export const getDosenCards = async (page, q = '') => {
+  const perPage = DOSEN_PER_PAGE;
+  const dosenCards = await publicRepo.dosenCard(page, q);
+  const total = await publicRepo.countTotalDosen(q);
+  const lastPage = Math.ceil(total / perPage);
+  return {
+    data: dosenCards,
+    meta: {
+      current_page: page,
+      per_page: perPage,
+      total: total,
+      last_page: lastPage
+    }
+  };
 }
 
 export const getDosenDetail = async (id) => {
@@ -22,7 +35,37 @@ export const getCountries = async () => {
 };
 
 export const getAfiliasi = async () => {
+  // default list without pagination (legacy use)
   const [rows] = await db.query('SELECT id_afiliasi, institusi FROM afiliasi ORDER BY institusi');
   return rows;
 };
 
+export const getAfiliasiPaged = async (page = 1, q = '') => {
+  const perPage = AFILIASI_PER_PAGE;
+  const data = await publicRepo.listAfiliasi(page, q);
+  const total = await publicRepo.countAfiliasi(q);
+  const lastPage = Math.ceil(total / perPage) || 1;
+  return {
+    data,
+    meta: {
+      current_page: page,
+      per_page: perPage,
+      total,
+      last_page: lastPage,
+    },
+  };
+};
+
+export const getAfiliasiDetail = async (id_afiliasi) => {
+  const detail = await publicRepo.afiliasiDetail(id_afiliasi);
+  if (!detail) return null;
+
+  const dosens = await publicRepo.afiliasiDosens(id_afiliasi);
+  const publikasi = await publicRepo.afiliasiPublikasi(id_afiliasi);
+
+  return {
+    ...detail,
+    dosens,
+    publikasi
+  };
+};

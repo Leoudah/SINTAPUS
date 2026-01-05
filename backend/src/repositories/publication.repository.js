@@ -13,7 +13,7 @@ class PublicationRepository {
     const query = `
       INSERT INTO publikasi 
       (eid, doi, judul, creator, tahun, jenis, link_publikasi, citation_count, id_jurnal, status, is_public, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'submitted', 0, NOW())
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'verified', 0, NOW())
     `;
     
     // FIX: Added data.id_jurnal to parameters
@@ -45,7 +45,7 @@ class PublicationRepository {
         jenis = ?, 
         link_publikasi = ?, 
         citation_count = ?,
-        status = 'submitted', 
+        status = 'verified', 
         is_public = 0,
         verification_note = 'Metadata updated via Scopus Sync'
       WHERE id_publikasi = ?

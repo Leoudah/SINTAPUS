@@ -25,6 +25,7 @@ export default function AccountTable({ data, reload }) {
               <th className="px-4 py-3 text-left">Status</th>
               <th className="px-4 py-3 text-left">Nama</th>
               <th className="px-4 py-3 text-left">NIDN</th>
+              <th className="px-4 py-3 text-left">Scopus_id</th>
               <th className="px-4 py-3 text-center">Aksi</th>
             </tr>
           </thead>
@@ -57,6 +58,7 @@ export default function AccountTable({ data, reload }) {
 
                 <td className="px-4 py-3">{row.nama || "-"}</td>
                 <td className="px-4 py-3">{row.nidn || "-"}</td>
+                <td className="px-4 py-3">{row.scopus_author_id || "-"}</td>
 
                 <td className="px-4 py-3 text-center">
                     <button

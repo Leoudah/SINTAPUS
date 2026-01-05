@@ -105,10 +105,6 @@ export default function DetailDosen() {
                   <div className="text-2xl font-bold">{totalPublikasi}</div>
                   <div className="text-xs text-gray-500">Total Publikasi</div>
                 </div>
-                <div>
-                  <div className="text-2xl font-bold">-</div>
-                  <div className="text-xs text-gray-500">SINTA Score</div>
-                </div>
               </div>
 
               <div className="mt-4">

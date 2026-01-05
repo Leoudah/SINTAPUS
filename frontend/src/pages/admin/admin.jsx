@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchAccounts } from "../../api/admin.api";
+import { fetchAccounts, fetchPublications } from "../../api/admin.api";
 import { useLogout } from "../../hooks/userLogout";
 
 import CreateUserModal from "../../components/CreateUserModal";
@@ -13,6 +13,10 @@ export default function Admin() {
   // counts for the overview cards
   const [counts, setCounts] = useState({ total: 0, submitted: 0, verified: 0, rejected: 0 });
   const [countsLoading, setCountsLoading] = useState(false);
+
+  // publication counts
+  const [pubCounts, setPubCounts] = useState({ total: 0, draft: 0, submitted: 0, verified: 0, rejected: 0 });
+  const [pubCountsLoading, setPubCountsLoading] = useState(false);
 
   const [createOpen, setCreateOpen] = useState(false);
 
@@ -64,7 +68,34 @@ export default function Admin() {
 
   useEffect(() => {
     loadCounts();
+    loadPubCounts();
   }, []);
+
+  // load publication counts for overview cards
+  const loadPubCounts = async () => {
+    setPubCountsLoading(true);
+    try {
+      const [allRes, draftRes, submittedRes, verifiedRes, rejectedRes] = await Promise.all([
+        fetchPublications(),
+        fetchPublications("draft"),
+        fetchPublications("submitted"),
+        fetchPublications("verified"),
+        fetchPublications("rejected"),
+      ].map((p) => p.catch((e) => ({ data: { data: [] } }))));
+
+      setPubCounts({
+        total: allRes.data.data?.length ?? 0,
+        draft: draftRes.data.data?.length ?? 0,
+        submitted: submittedRes.data.data?.length ?? 0,
+        verified: verifiedRes.data.data?.length ?? 0,
+        rejected: rejectedRes.data.data?.length ?? 0,
+      });
+    } catch (err) {
+      console.error("Gagal memuat publication counts:", err);
+    } finally {
+      setPubCountsLoading(false);
+    }
+  };
 
   const cardClass = (active) =>
     `bg-white p-6 rounded-lg shadow-sm cursor-pointer flex-1 ${active ? "ring-2 ring-offset-2 ring-purple-400" : ""}`;
@@ -79,25 +110,16 @@ export default function Admin() {
               <h1 className="text-3xl font-bold">Admin Dashboard</h1>
               <p className="text-sm opacity-90">Kelola akun dosen dan verifikasi</p>
             </div>
-
-            <div>
-              <button
-                onClick={() => setCreateOpen(true)}
-                className="bg-white text-purple-600 px-4 py-2 rounded shadow hover:bg-gray-100"
-              >
-                Buat Akun Baru
-              </button>
-            </div>
           </div>
-        
+
           <AdminNavbar />
         </div>
       </div>
-
       <div className="max-w-7xl mx-auto mt-6 px-6">
-        {/* Stats cards */}
+        {/* User Stats Cards */}
+        <h2 className="text-xl font-semibold mb-4">Statistik User</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className={cardClass(status === "")} onClick={() => setStatus("")}> 
+          <div className={cardClass(status === "")} onClick={() => setStatus("")}>
             <div className="text-sm text-gray-500">Total Akun</div>
             <div className="mt-3 text-3xl font-bold">{countsLoading ? '...' : counts.total}</div>
             <div className="mt-2 text-sm text-gray-400">Semua status</div>
@@ -131,6 +153,54 @@ export default function Admin() {
 
           <div>
             <a href="/dashboard/admin/manage" className="bg-purple-600 text-white px-4 py-2 rounded shadow hover:bg-purple-700">Kelola Akun</a>
+          </div>
+        </div>
+
+        {/* Publication Stats Cards */}
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold mb-4">Statistik Publikasi</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="bg-white p-6 rounded-lg shadow-sm flex-1">
+              <div className="text-sm text-gray-500">Total Publikasi</div>
+              <div className="mt-3 text-3xl font-bold">{pubCountsLoading ? '...' : pubCounts.total}</div>
+              <div className="mt-2 text-sm text-gray-400">Semua status</div>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm flex-1">
+              <div className="text-sm text-gray-500">Draft</div>
+              <div className="mt-3 text-3xl font-bold text-gray-600">{pubCountsLoading ? '...' : pubCounts.draft}</div>
+              <div className="mt-2 text-sm text-gray-400">Belum dikirim</div>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm flex-1">
+              <div className="text-sm text-gray-500">Submitted</div>
+              <div className="mt-3 text-3xl font-bold text-yellow-600">{pubCountsLoading ? '...' : pubCounts.submitted}</div>
+              <div className="mt-2 text-sm text-gray-400">Menunggu review</div>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm flex-1">
+              <div className="text-sm text-gray-500">Verified</div>
+              <div className="mt-3 text-3xl font-bold text-green-600">{pubCountsLoading ? '...' : pubCounts.verified}</div>
+              <div className="mt-2 text-sm text-gray-400">Disetujui</div>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm flex-1">
+              <div className="text-sm text-gray-500">Rejected</div>
+              <div className="mt-3 text-3xl font-bold text-red-600">{pubCountsLoading ? '...' : pubCounts.rejected}</div>
+              <div className="mt-2 text-sm text-gray-400">Ditolak</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Daftar Publikasi summary card (link to Manage Publication page) */}
+        <div className="bg-white rounded-lg shadow mt-6 p-6 flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold">Daftar Publikasi</h2>
+            <p className="text-sm text-gray-500 mt-1">{pubCounts.total} publikasi terdaftar — {pubCounts.submitted} menunggu verifikasi</p>
+          </div>
+
+          <div>
+            <a href="/dashboard/admin/managePublication" className="bg-purple-600 text-white px-4 py-2 rounded shadow hover:bg-purple-700">Kelola Publikasi</a>
           </div>
         </div>
       </div>

@@ -1,9 +1,23 @@
 import api from "./axios.api";
 
 
-// list / paginated
-export const fetchAccountDetail = (page) => {
-  return api.get(`/public/dosen?page=${page}`);
+// list / paginated with optional search
+export const fetchAccountDetail = (page, q = '') => {
+  const params = new URLSearchParams({ page });
+  if (q) params.set('q', q);
+  return api.get(`/public/dosen?${params.toString()}`);
+};
+
+// afiliasi list with optional search
+export const fetchAfiliasi = (page, q = '') => {
+  const params = new URLSearchParams({ page });
+  if (q) params.set('q', q);
+  return api.get(`/public/afiliasi?${params.toString()}`);
+};
+
+// detail afiliasi by id
+export const fetchAfiliasiDetail = (id) => {
+  return api.get(`/public/afiliasi/${id}`);
 };
 
 // detail dosen publik by id

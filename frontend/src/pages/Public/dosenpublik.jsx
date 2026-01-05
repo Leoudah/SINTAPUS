@@ -13,14 +13,15 @@ export default function DosenPublik() {
   const [q, setQ] = useState("");
   const [sort, setSort] = useState("");
 
-  const loadPage = async (p = 1) => {
+  const loadPage = async (p = 1, qSearch = "") => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetchAccountDetail(p);
-      const items = res?.data?.data ?? res?.data ?? [];
+      const res = await fetchAccountDetail(p, qSearch);
+      const payload = res?.data ?? {};
+      const items = Array.isArray(payload.data) ? payload.data : Array.isArray(payload) ? payload : [];
       setDosens(items);
-      setMeta(res?.data?.meta ?? {});
+      setMeta(payload.meta ?? payload.data?.meta ?? {});
     } catch (err) {
       setError("Gagal memuat data dosen");
       setDosens([]);
@@ -31,20 +32,13 @@ export default function DosenPublik() {
   };
 
   useEffect(() => {
-    loadPage(page);
+    loadPage(page, q);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page]);
+  }, [page, q]);
 
   const filtered = useMemo(() => {
-    let list = [...dosens];
-    if (q.trim()) {
-      const key = q.toLowerCase();
-      list = list.filter((d) => {
-        const name = (d.nama || d.name || d.fullname || "").toLowerCase();
-        const aff = (d.afiliasi || d.affiliation || "").toLowerCase();
-        return name.includes(key) || aff.includes(key);
-      });
-    }
+    const base = Array.isArray(dosens) ? dosens : [];
+    let list = [...base];
 
     if (sort === "sinta3") {
       list.sort((a, b) => (b.sinta_score_3yr || b.sinta3 || 0) - (a.sinta_score_3yr || a.sinta3 || 0));
@@ -53,9 +47,9 @@ export default function DosenPublik() {
     }
 
     return list;
-  }, [dosens, q, sort]);
+  }, [dosens, sort]);
 
-  const totalPages = meta.last_page || (meta.total && meta.per_page ? Math.ceil(meta.total / meta.per_page) : undefined);
+  const totalPages = meta?.last_page || (meta?.total && meta?.per_page ? Math.ceil(meta.total / meta.per_page) : undefined);
   const totalRecords = meta.total;
 
   const handlePageClick = (p) => {
@@ -83,10 +77,17 @@ export default function DosenPublik() {
             <div className="flex-1 md:flex md:items-center md:gap-4">
               <select value={sort} onChange={(e) => setSort(e.target.value)} className="px-3 py-2 border rounded w-full md:w-64">
                 <option value="">Urutkan</option>
-                <option value="sinta3">Sinta Score 3Yr (desc)</option>
                 <option value="sintaOverall">Sinta Score Overall (desc)</option>
               </select>
-              <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search..." className="mt-2 md:mt-0 w-full md:w-1/2 px-3 py-2 border rounded" />
+              <input
+                value={q}
+                onChange={(e) => {
+                  setPage(1);
+                  setQ(e.target.value);
+                }}
+                placeholder="Search..."
+                className="mt-2 md:mt-0 w-full md:w-1/2 px-3 py-2 border rounded"
+              />
             </div>
             <div className="text-sm text-gray-600">{totalRecords ? `Page ${page} of ${totalPages ?? '?'} | Total Records ${totalRecords}` : ''}</div>
           </div>
@@ -134,11 +135,6 @@ export default function DosenPublik() {
                               <div className="text-2xl font-bold">{totalPublikasi}</div>
                               <div className="text-xs text-gray-500">Total Publikasi</div>
                             </div>
-
-                            <div className="text-center">
-                              <div className="text-2xl font-bold">-</div>
-                              <div className="text-xs text-gray-500">SINTA Score</div>
-                            </div>
                           </div>
                         </div>
                       </div>
@@ -147,7 +143,6 @@ export default function DosenPublik() {
 
                       <div className="mt-4 text-sm text-gray-600">
                         <div className="flex gap-6">
-                          <div>Total Publikasi : <span className="font-semibold">{totalPublikasi ?? '-'}</span></div>
                           <div>Dosen ID : <span className="font-semibold">{idDosen || '-'}</span></div>
                         </div>
                       </div>
@@ -159,7 +154,7 @@ export default function DosenPublik() {
                     <span className="text-gray-500 mr-2">Subjects:</span>
                     {subjects.length ? (
                       <span className="inline-flex gap-2">
-                        {subjects.slice(0,3).map((s, i) => (
+                        {subjects.slice(0, 3).map((s, i) => (
                           <span key={i} className="bg-blue-600 text-white text-xs px-2 py-1 rounded">{s}</span>
                         ))}
                       </span>
@@ -181,17 +176,8 @@ export default function DosenPublik() {
 
           {/* page numbers (show up to 5) */}
           {(() => {
-            const pages = [];
-            const maxButtons = 5;
-            const current = page;
-            let start = Math.max(1, current - Math.floor(maxButtons / 2));
-            if (totalPages) {
-              if (start + maxButtons - 1 > totalPages) start = Math.max(1, totalPages - maxButtons + 1);
-            }
-            for (let i = start; i < start + maxButtons && (!totalPages || i <= totalPages); i++) {
-              pages.push(i);
-            }
-
+            const total = totalPages || 1;
+            const pages = Array.from({ length: total }, (_, idx) => idx + 1);
             return pages.map((p) => (
               <button key={p} onClick={() => handlePageClick(p)} className={`px-3 py-1 rounded ${p === page ? 'bg-blue-600 text-white' : 'bg-white border'}`}>
                 {p}
@@ -199,7 +185,7 @@ export default function DosenPublik() {
             ));
           })()}
 
-          <button onClick={handleNext} className="px-3 py-1 bg-white border rounded">Next</button>
+          <button onClick={handleNext} disabled={totalPages ? page >= totalPages : false} className="px-3 py-1 bg-white border rounded disabled:opacity-50">Next</button>
         </div>
 
       </div>
