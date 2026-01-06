@@ -25,7 +25,7 @@ export const dosenCard = async (page = 1, q = '') => {
     LEFT JOIN publikasi p ON p.id_publikasi = pp.id_publikasi
     LEFT JOIN dosen_tag dt ON dt.id_dosen = d.id_dosen
     LEFT JOIN tag t ON t.id_tag = dt.id_tag
-    WHERE u.role = 'Dosen'
+    WHERE u.role = 'Dosen' AND u.status = 'verified'
     ${q ? `AND (d.nama LIKE ? OR d.nidn LIKE ? OR a.institusi LIKE ? OR t.nama LIKE ?)` : ''}
     GROUP BY d.id_dosen
     ORDER BY d.nama
