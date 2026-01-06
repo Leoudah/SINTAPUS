@@ -36,7 +36,7 @@ function UpdateProfile() {
                 // Fetch countries and afiliasi
                 const [countriesRes, afiliasiRes] = await Promise.all([
                     fetch('http://localhost:5000/api/public/countries'),
-                    fetch('http://localhost:5000/api/public/afiliasi')
+                    fetch('http://localhost:5000/api/public/afiliasi/all')
                 ]);
                 setCountries(await countriesRes.json().then(d => d.data));
                 setAfiliasiList(await afiliasiRes.json().then(d => d.data));

@@ -31,7 +31,7 @@ export default function Register() {
       try {
         const [countriesRes, afiliasiRes] = await Promise.all([
           api.get("/public/countries"),
-          api.get("/public/afiliasi")
+          api.get("/public/afiliasi/all")
         ]);
         setCountries(countriesRes.data.data);
         setAfiliasiList(afiliasiRes.data.data);
