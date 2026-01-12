@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import NavbarPublik from "../../components/navbarpublik";
 import { fetchPublicDosenById, fetchPublicDosenPublications } from "../../api/publik.api";
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 
 export default function DetailDosen() {
   const { id } = useParams();
@@ -11,6 +12,7 @@ export default function DetailDosen() {
   const [publications, setPublications] = useState([]);
   const [pubLoading, setPubLoading] = useState(false);
   const [pubError, setPubError] = useState(null);
+  const [sourceFilter, setSourceFilter] = useState('');
 
   useEffect(() => {
     const load = async () => {
@@ -37,7 +39,7 @@ export default function DetailDosen() {
       setPubLoading(true);
       setPubError(null);
       try {
-        const res = await fetchPublicDosenPublications(id);
+        const res = await fetchPublicDosenPublications(id, 1, sourceFilter || null);
         const data = res?.data?.data ?? [];
         setPublications(data);
       } catch (err) {
@@ -48,7 +50,7 @@ export default function DetailDosen() {
     };
 
     loadPublications();
-  }, [dosen, id]);
+  }, [dosen, id, sourceFilter]);
 
   if (loading) return (
     <div>
@@ -87,6 +89,15 @@ export default function DetailDosen() {
   // Filter publications to only include those that are verified and public
   const filteredPublications = publications;
 
+  // Prepare data for pie chart (last 5 years)
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
+  const publicationStats = dosen.publicationStats || [];
+  const chartData = publicationStats.map((stat, index) => ({
+    name: stat.tahun?.toString() || 'Unknown',
+    value: parseInt(stat.count) || 0,
+    fill: COLORS[index % COLORS.length]
+  }));
+
 
   return (
     <div>
@@ -123,9 +134,56 @@ export default function DetailDosen() {
           </div>
         </div>
 
+        {/* Publication Statistics Chart */}
+        {chartData.length > 0 && (
+          <div className="mt-6 bg-white rounded-lg shadow p-6">
+            <h2 className="text-lg font-semibold mb-4">Publikasi 5 Tahun Terakhir</h2>
+            <div className="flex justify-center">
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={chartData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, value }) => `${name}: ${value}`}
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {chartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.fill} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
         {/* Publications List */}
         <div className="mt-6 bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold mb-3">Publikasi</h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold">Publikasi</h2>
+
+            {/* Source Filter */}
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-gray-600">Filter by Source:</label>
+              <select
+                value={sourceFilter}
+                onChange={(e) => setSourceFilter(e.target.value)}
+                className="px-3 py-1 border rounded text-sm"
+              >
+                <option value="">All Sources</option>
+                <option value="scopus">Scopus</option>
+                <option value="garuda">Garuda</option>
+                <option value="rama">Rama</option>
+                <option value="google_scholar">Google Scholar</option>
+              </select>
+            </div>
+          </div>
 
           {pubLoading ? (
             <p className="text-gray-600">Memuat publikasi...</p>
@@ -156,6 +214,9 @@ export default function DetailDosen() {
                     {pub.tahun && <span className="ml-2">• {pub.tahun}</span>}
                     {pub.citation_count !== null && pub.citation_count !== undefined && (
                       <span className="ml-2">• {pub.citation_count} sitasi</span>
+                    )}
+                    {pub.source && (
+                      <span className="ml-2">• <span className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded text-xs">{pub.source}</span></span>
                     )}
                   </div>
                 </div>

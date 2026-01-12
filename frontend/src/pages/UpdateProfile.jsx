@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLogout } from '../hooks/userLogout';
 
 function UpdateProfile() {
+    const logout = useLogout();
     const navigate = useNavigate();
     const [profile, setProfile] = useState({
         nama: '',
@@ -76,8 +78,13 @@ function UpdateProfile() {
             });
             const data = await res.json();
             if (res.ok) {
-                alert('Profile updated successfully');
-                navigate('/dashboard/dosen');
+                alert(data.message || 'Profile updated successfully');
+                // Check if backend requests logout
+                if (data.logout) {
+                    logout(); // This will clear localStorage and redirect to login
+                } else {
+                    navigate('/dashboard/dosen');
+                }
             } else {
                 alert(data.message);
             }
@@ -155,7 +162,7 @@ function UpdateProfile() {
                         type="submit"
                         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
                     >
-                        Update Profile
+                        Update Profile & Logout
                     </button>
                 </form>
             </div>

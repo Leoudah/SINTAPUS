@@ -19,14 +19,18 @@ export const getDosenCards = async (page, q = '') => {
 }
 
 export const getDosenDetail = async (id) => {
-  return publicRepo.dosenById(id);
+  const dosen = await publicRepo.dosenById(id);
+  if (!dosen) return null;
+
+  const stats = await publicRepo.getDosenPublicationStats(id);
+  return { ...dosen, publicationStats: stats };
 }
 export const getDosenPage = async (id) => {
   return publicRepo.dosenPage(id);
 }
 
-export const getDosenPublicationsPage = async (id_dosen, page) => {
-  return publicRepo.dosenPublicationsPage(id_dosen, page);
+export const getDosenPublicationsPage = async (id_dosen, page, source = null) => {
+  return publicRepo.dosenPublicationsPage(id_dosen, page, source);
 }
 
 export const getCountries = async () => {
@@ -56,16 +60,22 @@ export const getAfiliasiPaged = async (page = 1, q = '') => {
   };
 };
 
-export const getAfiliasiDetail = async (id_afiliasi) => {
+export const getAfiliasiDetail = async (id_afiliasi, source = null) => {
   const detail = await publicRepo.afiliasiDetail(id_afiliasi);
   if (!detail) return null;
 
   const dosens = await publicRepo.afiliasiDosens(id_afiliasi);
-  const publikasi = await publicRepo.afiliasiPublikasi(id_afiliasi);
+  const publikasi = await publicRepo.afiliasiPublikasi(id_afiliasi, source);
+  const stats = await publicRepo.getAfiliasiPublicationStats(id_afiliasi);
 
   return {
     ...detail,
     dosens,
-    publikasi
+    publikasi,
+    publicationStats: stats
   };
+};
+
+export const getAllJournals = async () => {
+  return publicRepo.getAllJournals();
 };

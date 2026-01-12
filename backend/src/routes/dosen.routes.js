@@ -1,6 +1,6 @@
 import express from "express";
 import { authenticate, authorizeDosen } from "../middlewares/auth.middleware.js";
-import { getDosenByScopusID, updateDosenProfile, getDosenPublications, getPublicationStats } from "../controllers/dosen.controller.js";
+import { getDosenByScopusID, updateDosenProfile, getDosenPublications, getPublicationStats, createManualPublication, updatePublication, deletePublication } from "../controllers/dosen.controller.js";
 const router = express.Router();
 
 // GET /api/dosen/scopus/:scopusAuthorId
@@ -11,5 +11,11 @@ router.put("/:id_dosen", authenticate, authorizeDosen, updateDosenProfile);
 router.get("/:id_dosen/publikasi", authenticate, authorizeDosen, getDosenPublications);
 // GET /api/dosen/:id_dosen/stats
 router.get("/:id_dosen/stats", authenticate, authorizeDosen, getPublicationStats);
+// POST /api/dosen/:id_dosen/publikasi/manual
+router.post("/:id_dosen/publikasi/manual", authenticate, authorizeDosen, createManualPublication);
+// PUT /api/dosen/:id_dosen/publikasi/:id_publikasi
+router.put("/:id_dosen/publikasi/:id_publikasi", authenticate, authorizeDosen, updatePublication);
+// DELETE /api/dosen/:id_dosen/publikasi/:id_publikasi
+router.delete("/:id_dosen/publikasi/:id_publikasi", authenticate, authorizeDosen, deletePublication);
 
 export default router;

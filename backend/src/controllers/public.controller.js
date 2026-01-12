@@ -42,7 +42,8 @@ export const getDosenPublicationsPage = async (req, res) => {
     try {
         const { id_dosen } = req.params;
         const page = parseInt(req.query.page) || 1;
-        const publicationsPage = await publicService.getDosenPublicationsPage(id_dosen, page);
+        const source = req.query.source || null;
+        const publicationsPage = await publicService.getDosenPublicationsPage(id_dosen, page, source);
         res.json({ success: true, data: publicationsPage });
     } catch (err) {
         console.error(err);
@@ -85,11 +86,22 @@ export const getAfiliasi = async (req, res) => {
 export const getAfiliasiDetail = async (req, res) => {
     try {
         const { id } = req.params;
-        const detail = await publicService.getAfiliasiDetail(id);
+        const source = req.query.source || null;
+        const detail = await publicService.getAfiliasiDetail(id, source);
         if (!detail) {
             return res.status(404).json({ success: false, message: 'Afiliasi not found' });
         }
         res.json({ success: true, data: detail });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+export const getAllJournals = async (req, res) => {
+    try {
+        const journals = await publicService.getAllJournals();
+        res.json({ success: true, data: journals });
     } catch (err) {
         console.error(err);
         res.status(500).json({ success: false, message: 'Server error' });

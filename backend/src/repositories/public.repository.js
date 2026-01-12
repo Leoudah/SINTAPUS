@@ -66,7 +66,7 @@ export const dosenPage = async (id) => {
   return rows;
 };
 
-export const dosenPublicationsPage = async (id_dosen, page = 1) => {
+export const dosenPublicationsPage = async (id_dosen, page = 1, source = null) => {
   const offset = (page - 1) * 20;
   const sql = `
     SELECT
@@ -76,18 +76,21 @@ export const dosenPublicationsPage = async (id_dosen, page = 1) => {
       p.tahun,
       p.link_publikasi,
       p.citation_count,
+      p.source,
       j.nama_jurnal as jurnal
     FROM penulis_publikasi pp
     LEFT JOIN publikasi p ON pp.id_publikasi = p.id_publikasi
     LEFT JOIN dosen d ON pp.id_dosen = d.id_dosen
     LEFT JOIN jurnal j ON p.id_jurnal = j.id_jurnal
     WHERE d.id_dosen = ? AND p.is_public = 1 AND p.status = 'verified'
-    GROUP BY p.id_publikasi, p.judul, p.creator, p.tahun, j.nama_jurnal
+    ${source ? 'AND p.source = ?' : ''}
+    GROUP BY p.id_publikasi, p.judul, p.creator, p.tahun, j.nama_jurnal, p.source
     ORDER BY p.tahun DESC
     LIMIT 20 OFFSET ?;
   `;
 
-  const [rows] = await db.query(sql, [id_dosen, offset]);
+  const params = source ? [id_dosen, source, offset] : [id_dosen, offset];
+  const [rows] = await db.query(sql, params);
   return rows;
 };
 
@@ -220,7 +223,7 @@ export const afiliasiDosens = async (id_afiliasi) => {
   return rows;
 };
 
-export const afiliasiPublikasi = async (id_afiliasi) => {
+export const afiliasiPublikasi = async (id_afiliasi, source = null) => {
   const sql = `
     SELECT
       p.id_publikasi,
@@ -229,6 +232,7 @@ export const afiliasiPublikasi = async (id_afiliasi) => {
       p.tahun,
       p.link_publikasi,
       p.citation_count,
+      p.source,
       j.nama_jurnal as jurnal,
       GROUP_CONCAT(DISTINCT d.nama SEPARATOR ', ') AS dosen_names
     FROM publikasi p
@@ -236,9 +240,68 @@ export const afiliasiPublikasi = async (id_afiliasi) => {
     LEFT JOIN jurnal j ON p.id_jurnal = j.id_jurnal
     LEFT JOIN dosen d ON pp.id_dosen = d.id_dosen
     WHERE pp.id_afiliasi = ? AND p.is_public = 1 AND p.status = 'verified'
-    GROUP BY p.id_publikasi, p.judul, p.creator, p.tahun, p.link_publikasi, p.citation_count, j.nama_jurnal
+    ${source ? 'AND p.source = ?' : ''}
+    GROUP BY p.id_publikasi, p.judul, p.creator, p.tahun, p.link_publikasi, p.citation_count, p.source, j.nama_jurnal
     ORDER BY p.tahun DESC;
   `;
-  const [rows] = await db.query(sql, [id_afiliasi]);
+  const params = source ? [id_afiliasi, source] : [id_afiliasi];
+  const [rows] = await db.query(sql, params);
+  return rows;
+};
+
+export const getAllJournals = async () => {
+  const sql = `
+    SELECT 
+      id_jurnal,
+      nama_jurnal,
+      issn,
+      publisher,
+      quartile
+    FROM jurnal
+    ORDER BY nama_jurnal ASC;
+  `;
+  const [rows] = await db.query(sql);
+  return rows;
+};
+
+// Get publication statistics for dosen (last 5 years)
+export const getDosenPublicationStats = async (id_dosen) => {
+  const currentYear = new Date().getFullYear();
+  const sql = `
+    SELECT 
+      p.tahun,
+      COUNT(DISTINCT p.id_publikasi) as count
+    FROM penulis_publikasi pp
+    LEFT JOIN publikasi p ON pp.id_publikasi = p.id_publikasi
+    WHERE pp.id_dosen = ? 
+      AND p.is_public = 1 
+      AND p.status = 'verified'
+      AND p.tahun >= ?
+      AND p.tahun <= ?
+    GROUP BY p.tahun
+    ORDER BY p.tahun DESC;
+  `;
+  const [rows] = await db.query(sql, [id_dosen, currentYear - 4, currentYear]);
+  return rows;
+};
+
+// Get publication statistics for afiliasi (last 5 years)
+export const getAfiliasiPublicationStats = async (id_afiliasi) => {
+  const currentYear = new Date().getFullYear();
+  const sql = `
+    SELECT 
+      p.tahun,
+      COUNT(DISTINCT p.id_publikasi) as count
+    FROM penulis_publikasi pp
+    LEFT JOIN publikasi p ON pp.id_publikasi = p.id_publikasi
+    WHERE pp.id_afiliasi = ? 
+      AND p.is_public = 1 
+      AND p.status = 'verified'
+      AND p.tahun >= ?
+      AND p.tahun <= ?
+    GROUP BY p.tahun
+    ORDER BY p.tahun DESC;
+  `;
+  const [rows] = await db.query(sql, [id_afiliasi, currentYear - 4, currentYear]);
   return rows;
 };

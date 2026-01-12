@@ -1,6 +1,6 @@
 import express from "express";
-import { getDosenCards, getDosenDetail, getDosenPublicationsPage, getCountries, getAfiliasi, getAfiliasiDetail } from "../controllers/public.controller.js";
-import{ getAfiliasiPaged } from "../controllers/public.controller.js";
+import { getDosenCards, getDosenDetail, getDosenPublicationsPage, getCountries, getAfiliasi, getAfiliasiDetail, getAllJournals } from "../controllers/public.controller.js";
+import { getAfiliasiPaged } from "../controllers/public.controller.js";
 
 const router = express.Router();
 
@@ -16,6 +16,7 @@ router.get("/countries", getCountries);
 router.get("/afiliasi/all", getAfiliasi);
 router.get("/afiliasi", getAfiliasiPaged);
 router.get("/afiliasi/:id", getAfiliasiDetail);
+router.get("/journals", getAllJournals);
 
 
 export default router;

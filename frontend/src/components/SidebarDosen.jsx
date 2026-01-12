@@ -7,6 +7,7 @@ import {
   FiBookOpen,
   FiRefreshCw,
   FiLogOut,
+  FiPlus,
 } from 'react-icons/fi';
 
 function SidebarDosen({ logout }) {
@@ -16,6 +17,7 @@ function SidebarDosen({ logout }) {
   const menuItems = [
     { icon: FiHome, label: 'Dashboard', path: '/dashboard/dosen' },
     { icon: FiBookOpen, label: 'Publikasiku', path: '/publikasi-ku' },
+    { icon: FiPlus, label: 'Tambah Publikasi', path: '/tambah-publikasi' },
     { icon: FiRefreshCw, label: 'Sinkronisasi Publikasi', path: '/sinkronisasi-publikasi' },
   ];
 

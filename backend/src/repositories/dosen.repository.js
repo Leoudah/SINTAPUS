@@ -26,18 +26,28 @@ export const updateProfile = async (id_dosen, profileData) => {
     link_foto
   } = profileData;
 
-  const query = `
+  // Update dosen profile
+  const dosenQuery = `
       UPDATE dosen
       SET scopus_author_id = ?, id_afiliasi = ?, citizenship = ?, foto_profil = ?
       WHERE id_dosen = ?
     `;
-  const [result] = await db.execute(query, [
+  await db.execute(dosenQuery, [
     scopus_author_id,
     id_afiliasi,
     citizenship,
     link_foto,
     id_dosen
   ]);
+
+  // Update user status to 'submitted' for verification
+  const userQuery = `
+      UPDATE user
+      SET status = 'submitted'
+      WHERE id_dosen = ?
+    `;
+  const [result] = await db.execute(userQuery, [id_dosen]);
+
   return result;
 }
 
@@ -55,6 +65,16 @@ export const findMyPublications = async (id_dosen) => {
   const [rows] = await db.execute(query, [id_dosen]);
   return rows;
 }
+
+export const togglePublicationStatus = async (id_publikasi, is_public) => {
+  const query = `
+      UPDATE publikasi
+      SET is_public = ?
+      WHERE id_publikasi = ?
+    `;
+  const [result] = await db.execute(query, [is_public, id_publikasi]);
+  return result;
+};
 
 
 //KALAU SEMPAT NGERJAIN YANG INI
@@ -89,7 +109,7 @@ export const getDosenTags = async (id_dosen) => {
 
 export const getDosenById = async (id_dosen) => {
   const query = `
-      SELECT id_dosen, nama_dosen, scopus_author_id, id_afiliasi, citizenship, link_foto
+      SELECT id_dosen, nama, scopus_author_id, id_afiliasi, citizenship, foto_profil
       FROM dosen
       WHERE id_dosen = ?
       LIMIT 1
@@ -97,16 +117,6 @@ export const getDosenById = async (id_dosen) => {
   const [rows] = await db.execute(query, [id_dosen]);
   return rows[0];
 }
-
-export const togglePublicationStatus = async (id_publikasi, is_public) => {
-  const query = `
-      UPDATE publikasi
-      SET is_public = ?
-      WHERE id_publikasi = ?
-    `;
-  const [result] = await db.execute(query, [is_public, id_publikasi]);
-  return result;
-};
 
 export const getPublicationStats = async (id_dosen) => {
   const query = `

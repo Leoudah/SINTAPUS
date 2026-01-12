@@ -133,6 +133,7 @@ class SyncService {
       tahun: year || null,
       jenis: this.normalizeAggregationType(entry.aggregationType || entry['prism:aggregationType']),
       link_publikasi: this.findScopusLink(entry),
+      source: 'scopus',
       citation_count: parseInt(entry['citedby-count'] || entry['prism:citedby-count'] || 0),
       journal_name: entry.publicationName || entry['prism:publicationName'] || null,
       issn: entry.issn || entry['prism:issn'] || entry.eIssn || entry['prism:eIssn'] || null

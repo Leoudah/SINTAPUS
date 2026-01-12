@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import SidebarDosen from '../../components/SidebarDosen';
 import { useLogout } from '../../hooks/userLogout';
+import { updatePublication, deletePublication } from '../../api/dosen.api';
 import {
     FiExternalLink,
     FiCalendar,
@@ -11,38 +12,61 @@ import {
     FiToggleRight,
     FiAlertCircle,
     FiCheckCircle,
-    FiXCircle
+    FiXCircle,
+    FiEdit2,
+    FiTrash2,
+    FiX
 } from 'react-icons/fi';
 
 function PublikasiKu() {
     const logout = useLogout();
     const [publications, setPublications] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [editingPub, setEditingPub] = useState(null);
+    const [deleteConfirm, setDeleteConfirm] = useState(null);
+    const [journals, setJournals] = useState([]);
+    const [formData, setFormData] = useState({});
 
     useEffect(() => {
-        const fetchPublications = async () => {
-            const token = localStorage.getItem('token');
-            if (!token) return;
-
-            try {
-                const res = await fetch(
-                    'http://localhost:5000/api/auth/my-publications',
-                    { headers: { Authorization: `Bearer ${token}` } }
-                );
-
-                if (res.ok) {
-                    const data = await res.json();
-                    setPublications(data.publications || []);
-                }
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchPublications();
+        fetchJournals();
     }, []);
+
+    const fetchPublications = async () => {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        try {
+            const res = await fetch(
+                'http://localhost:5000/api/auth/my-publications',
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            if (res.ok) {
+                const data = await res.json();
+                setPublications(data.publications || []);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchJournals = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch('http://localhost:5000/api/public/journals', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (data.success) {
+                setJournals(data.data);
+            }
+        } catch (err) {
+            console.error('Error fetching journals:', err);
+        }
+    };
 
     const togglePublicationStatus = async (id, currentStatus) => {
         const token = localStorage.getItem('token');
@@ -75,6 +99,87 @@ function PublikasiKu() {
             }
         } catch (err) {
             console.error(err);
+        }
+    };
+
+    const handleEdit = (pub) => {
+        setEditingPub(pub);
+        setFormData({
+            judul: pub.judul,
+            source: pub.source || '',
+            id_jurnal: pub.id_jurnal,
+            doi: pub.doi || '',
+            creator: pub.creator || '',
+            tahun: pub.tahun,
+            jenis: pub.jenis || 'Journal Article',
+            link_publikasi: pub.link_publikasi || '',
+            citation_count: pub.citation_count || 0
+        });
+    };
+
+    const handleUpdate = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const userRes = await fetch('http://localhost:5000/api/auth/me', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const userData = await userRes.json();
+            const id_dosen = userData.id_dosen;
+
+            const submissionData = {
+                judul: formData.judul?.trim() || '',
+                source: formData.source || null,
+                id_jurnal: parseInt(formData.id_jurnal) || null,
+                doi: formData.doi?.trim() || null,
+                creator: formData.creator?.trim() || null,
+                tahun: parseInt(formData.tahun) || null,
+                jenis: formData.jenis || 'Other',
+                link_publikasi: formData.link_publikasi?.trim() || null,
+                citation_count: parseInt(formData.citation_count) || 0
+            };
+
+            // Validate before sending
+            if (!submissionData.judul) {
+                alert('Judul wajib diisi!');
+                return;
+            }
+            if (!submissionData.id_jurnal) {
+                alert('Jurnal wajib dipilih!');
+                return;
+            }
+
+            const response = await updatePublication(id_dosen, editingPub.id_publikasi, submissionData);
+
+            if (response.data.success) {
+                alert('Publikasi berhasil diupdate! Status berubah menjadi Draft untuk diverifikasi ulang.');
+                setEditingPub(null);
+                fetchPublications();
+            }
+        } catch (err) {
+            console.error('Error updating publication:', err);
+            alert(err.response?.data?.message || 'Gagal mengupdate publikasi');
+        }
+    };
+
+    const handleDelete = async (pub) => {
+        try {
+            const token = localStorage.getItem('token');
+            const userRes = await fetch('http://localhost:5000/api/auth/me', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const userData = await userRes.json();
+            const id_dosen = userData.id_dosen;
+
+            const response = await deletePublication(id_dosen, pub.id_publikasi);
+
+            if (response.data.success) {
+                alert('Publikasi berhasil dihapus!');
+                setDeleteConfirm(null);
+                fetchPublications();
+            }
+        } catch (err) {
+            console.error('Error deleting publication:', err);
+            alert(err.response?.data?.message || 'Gagal menghapus publikasi');
         }
     };
 
@@ -177,8 +282,8 @@ function PublikasiKu() {
                                     {/* Verification Status & Note */}
                                     {pub.status && (
                                         <div className={`mb-3 p-3 rounded-lg flex items-start gap-2 ${pub.status === 'verified' ? 'bg-green-50 border border-green-200' :
-                                                pub.status === 'rejected' ? 'bg-red-50 border border-red-200' :
-                                                    'bg-yellow-50 border border-yellow-200'
+                                            pub.status === 'rejected' ? 'bg-red-50 border border-red-200' :
+                                                'bg-yellow-50 border border-yellow-200'
                                             }`}>
                                             {pub.status === 'verified' && <FiCheckCircle className="text-green-600 mt-0.5 flex-shrink-0" size={18} />}
                                             {pub.status === 'rejected' && <FiXCircle className="text-red-600 mt-0.5 flex-shrink-0" size={18} />}
@@ -186,8 +291,8 @@ function PublikasiKu() {
 
                                             <div className="flex-1">
                                                 <p className={`font-semibold text-sm mb-1 ${pub.status === 'verified' ? 'text-green-800' :
-                                                        pub.status === 'rejected' ? 'text-red-800' :
-                                                            'text-yellow-800'
+                                                    pub.status === 'rejected' ? 'text-red-800' :
+                                                        'text-yellow-800'
                                                     }`}>
                                                     Status Verifikasi: {
                                                         pub.status === 'verified' ? 'Terverifikasi' :
@@ -198,8 +303,8 @@ function PublikasiKu() {
                                                 </p>
                                                 {pub.verification_note && (
                                                     <p className={`text-sm ${pub.status === 'verified' ? 'text-green-700' :
-                                                            pub.status === 'rejected' ? 'text-red-700' :
-                                                                'text-yellow-700'
+                                                        pub.status === 'rejected' ? 'text-red-700' :
+                                                            'text-yellow-700'
                                                         }`}>
                                                         <strong>Catatan:</strong> {pub.verification_note}
                                                     </p>
@@ -209,11 +314,29 @@ function PublikasiKu() {
                                     )}
 
                                     <div className="border-t pt-4">
-                                        <div className="flex justify-between items-center text-sm text-gray-600">
-                                            <span>ID Publikasi: {pub.id_publikasi}</span>
-                                            <span>
-                                                Citation Count: {pub.citation_count || 0}
-                                            </span>
+                                        <div className="flex justify-between items-center">
+                                            <div className="flex gap-2 text-sm text-gray-600">
+                                                <span>ID: {pub.id_publikasi}</span>
+                                                <span>•</span>
+                                                <span>Sitasi: {pub.citation_count || 0}</span>
+                                            </div>
+
+                                            <div className="flex gap-2">
+                                                <button
+                                                    onClick={() => handleEdit(pub)}
+                                                    className="flex items-center gap-2 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
+                                                >
+                                                    <FiEdit2 size={16} />
+                                                    Edit
+                                                </button>
+                                                <button
+                                                    onClick={() => setDeleteConfirm(pub)}
+                                                    className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                                                >
+                                                    <FiTrash2 size={16} />
+                                                    Hapus
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -222,6 +345,195 @@ function PublikasiKu() {
                     )}
                 </div>
             </div>
+
+            {/* Edit Modal */}
+            {editingPub && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                        <div className="p-6">
+                            <div className="flex justify-between items-center mb-4">
+                                <h2 className="text-2xl font-bold text-gray-800">Edit Publikasi</h2>
+                                <button
+                                    onClick={() => setEditingPub(null)}
+                                    className="text-gray-500 hover:text-gray-700"
+                                >
+                                    <FiX size={24} />
+                                </button>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Judul <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={formData.judul}
+                                        onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
+                                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Sumber</label>
+                                    <select
+                                        value={formData.source}
+                                        onChange={(e) => setFormData({ ...formData, source: e.target.value })}
+                                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    >
+                                        <option value="">Pilih Sumber (Opsional)</option>
+                                        <option value="scopus">Scopus</option>
+                                        <option value="rama">RAMA</option>
+                                        <option value="garuda">Garuda</option>
+                                        <option value="google_scholar">Google Scholar</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Jurnal <span className="text-red-500">*</span>
+                                    </label>
+                                    <select
+                                        value={formData.id_jurnal}
+                                        onChange={(e) => setFormData({ ...formData, id_jurnal: e.target.value })}
+                                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    >
+                                        <option value="">Pilih Jurnal</option>
+                                        {journals.map(journal => (
+                                            <option key={journal.id_jurnal} value={journal.id_jurnal}>
+                                                {journal.nama_jurnal} {journal.quartile ? `(Q${journal.quartile})` : ''}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">DOI</label>
+                                        <input
+                                            type="text"
+                                            value={formData.doi}
+                                            onChange={(e) => setFormData({ ...formData, doi: e.target.value })}
+                                            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Tahun</label>
+                                        <input
+                                            type="number"
+                                            value={formData.tahun}
+                                            onChange={(e) => setFormData({ ...formData, tahun: e.target.value })}
+                                            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Penulis</label>
+                                    <input
+                                        type="text"
+                                        value={formData.creator}
+                                        onChange={(e) => setFormData({ ...formData, creator: e.target.value })}
+                                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Jenis</label>
+                                    <select
+                                        value={formData.jenis}
+                                        onChange={(e) => setFormData({ ...formData, jenis: e.target.value })}
+                                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    >
+                                        <option value="Journal Article">Journal Article</option>
+                                        <option value="Conference Paper">Conference Paper</option>
+                                        <option value="Book Chapter">Book Chapter</option>
+                                        <option value="Review">Review</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Link Publikasi</label>
+                                    <input
+                                        type="url"
+                                        value={formData.link_publikasi}
+                                        onChange={(e) => setFormData({ ...formData, link_publikasi: e.target.value })}
+                                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Jumlah Sitasi</label>
+                                    <input
+                                        type="number"
+                                        value={formData.citation_count}
+                                        onChange={(e) => setFormData({ ...formData, citation_count: e.target.value })}
+                                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    />
+                                </div>
+
+                                <div className="flex gap-4 pt-4">
+                                    <button
+                                        onClick={handleUpdate}
+                                        className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-medium"
+                                    >
+                                        Update Publikasi
+                                    </button>
+                                    <button
+                                        onClick={() => setEditingPub(null)}
+                                        className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium"
+                                    >
+                                        Batal
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Delete Confirmation Modal */}
+            {deleteConfirm && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+                        <div className="flex items-center gap-4 mb-4">
+                            <div className="flex-shrink-0 w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                                <FiAlertCircle className="text-red-600" size={24} />
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-bold text-gray-800">Konfirmasi Hapus</h3>
+                                <p className="text-gray-600 text-sm">Tindakan ini tidak dapat dibatalkan</p>
+                            </div>
+                        </div>
+
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                            <p className="text-red-800 font-medium mb-2">
+                                Apakah Anda yakin ingin menghapus publikasi ini?
+                            </p>
+                            <p className="text-red-700 text-sm">
+                                <strong>"{deleteConfirm.judul}"</strong>
+                            </p>
+                        </div>
+
+                        <div className="flex gap-4">
+                            <button
+                                onClick={() => handleDelete(deleteConfirm)}
+                                className="flex-1 bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 font-medium transition-colors"
+                            >
+                                Ya, Hapus
+                            </button>
+                            <button
+                                onClick={() => setDeleteConfirm(null)}
+                                className="flex-1 border border-gray-300 py-3 rounded-lg hover:bg-gray-50 font-medium transition-colors"
+                            >
+                                Batal
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

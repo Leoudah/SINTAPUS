@@ -133,7 +133,11 @@ export const updateProfileController = [
 
       await updateProfile(id_dosen, updateData);
 
-      res.json({ message: 'Profile updated successfully' });
+      res.json({
+        success: true,
+        message: 'Profile updated. Status changed to submitted. Please login again.',
+        logout: true
+      });
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
