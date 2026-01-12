@@ -5,7 +5,7 @@ export default function NavbarPublik() {
     <nav className="bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-6">
-          <Link to="/" className="text-xl font-bold text-blue-600">SINTA</Link>
+          <Link to="/" className="text-xl font-bold text-blue-600">SINTAPUS</Link>
           <Link to="/dosenpublik" className="text-gray-700 hover:text-blue-600">Dosen Publik</Link>
           <Link to="/afiliasi" className="text-gray-700 hover:text-blue-600">Afiliasi</Link>
         </div>

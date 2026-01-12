@@ -36,7 +36,7 @@ function LandingPage() {
         <div className="relative">
           <img src={LogoFMIPA} alt="Logo FMIPA UNUD" className="w-24 mx-auto mb-6" />
           <h1 className="text-4xl md:text-5xl font-bold mb-4 animate-fadeUp">
-            Selamat Datang di Sistem Data Dosen Berbasis SINTA
+            Selamat Datang di Sistem Data Dosen SINTAPUS
           </h1>
           <p className="text-lg md:text-xl mb-8 max-w-xl mx-auto animate-fadeUp">
             Platform untuk publikasi, penelitian, dan kolaborasi akademik.
@@ -52,7 +52,7 @@ function LandingPage() {
 
       {/* Info Section */}
       <div className="bg-white text-gray-800 py-12 px-6">
-        <h2 className="text-2xl font-bold text-center mb-8">Sistem Data Dosen Berbasis SINTA</h2>
+        <h2 className="text-2xl font-bold text-center mb-8">Sistem Data Dosen SINTAPUS</h2>
         <div className="max-w-xl mx-auto space-y-4">
           <p className="flex items-center gap-3">
             <FaMapMarkerAlt className="text-blue-600" /> Jl. Raya Kampus, Unud, Bukit Jimbaran, Bali
