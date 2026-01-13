@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jan 04, 2026 at 02:43 PM
+-- Generation Time: Jan 13, 2026 at 02:21 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.3.8
 
@@ -372,7 +372,10 @@ INSERT INTO `dosen` (`id_dosen`, `nama`, `nidn`, `scopus_author_id`, `id_afilias
 (1, 'Muhammad Yeganehfar ', '0123456789', '57200213491', 28, 180, 'Link Nothing First', '2025-12-30 19:40:01', '2025-12-30 19:40:01'),
 (2, 'Dosen Test', '12345678', '57123456789', 1, 98, NULL, '2025-12-31 18:46:06', '2025-12-31 18:46:06'),
 (4, 'Dosen Test', '1234567', '57123456780', NULL, 98, NULL, '2025-12-31 18:52:24', '2025-12-31 18:52:24'),
-(5, 'Dosen Test', '87654321', '57123456980', 31, 98, NULL, '2025-12-31 18:57:21', '2025-12-31 18:57:21');
+(5, 'Dosen Test', '87654321', '57123456980', 31, 98, NULL, '2025-12-31 18:57:21', '2025-12-31 18:57:21'),
+(7, 'I Dewa Bayu', '127671812', '57225368971', 31, 98, NULL, '2026-01-04 16:47:52', '2026-01-12 16:03:59'),
+(8, 'INTENATIONAL YOUTH GOALS SINGAPORE, MALAYSIA, AND THAILAND BATCH 2 - BIGFAIR', '212121111', '123123123', 8, 98, NULL, '2026-01-06 03:34:04', '2026-01-06 03:34:04'),
+(9, ' I. Gede Wikania Wira Wiguna', '125657293', '57727281400', 31, 98, '/uploads/foto-1767682933735-571406765.jpg', '2026-01-06 06:54:47', '2026-01-06 07:02:13');
 
 -- --------------------------------------------------------
 
@@ -413,7 +416,15 @@ CREATE TABLE `jurnal` (
 
 INSERT INTO `jurnal` (`id_jurnal`, `nama_jurnal`, `issn`, `publisher`, `quartile`) VALUES
 (1, 'Unknown Journal', NULL, 'Unknown', NULL),
-(2, 'Journal of Information Communication and Ethics in Society', '1477996X', 'Unknown', NULL);
+(2, 'Journal of Information Communication and Ethics in Society', '1477996X', 'Unknown', NULL),
+(3, 'Data in Brief', '23523409', 'Unknown', NULL),
+(4, '2025 18th International Conference on Engineering of Modern Electric Systems Emes 2025', NULL, 'Unknown', NULL),
+(5, 'Proceedings International Conference on Smart Green Technology in Electrical and Information Systems Icsgteis', '28313992', 'Unknown', NULL),
+(6, 'Journal of Physics Conference Series', '17426588', 'Unknown', NULL),
+(7, 'Journal of Health Science and Medical Research', '25869981', 'Unknown', NULL),
+(8, 'Biomedical and Pharmacology Journal', '09746242', 'Unknown', NULL),
+(9, 'Asian Pacific Journal of Cancer Prevention', '15137368', 'Unknown', NULL),
+(10, 'Bali Medical Journal', '20891180', 'Unknown', NULL);
 
 -- --------------------------------------------------------
 
@@ -434,7 +445,23 @@ CREATE TABLE `penulis_publikasi` (
 --
 
 INSERT INTO `penulis_publikasi` (`id_publikasi`, `id_dosen`, `nama_penulis`, `urutan`, `id_afiliasi`) VALUES
-(1, 1, 'Unknown', 1, 28);
+(2, 1, 'Unknown', 1, 28),
+(3, 7, 'Unknown', 1, 31),
+(4, 7, 'Unknown', 1, 31),
+(5, 7, 'Unknown', 1, 31),
+(6, 7, 'Unknown', 1, 31),
+(7, 7, 'Unknown', 1, 31),
+(8, 7, 'Unknown', 1, 31),
+(9, 7, 'Unknown', 1, 31),
+(10, 7, 'Unknown', 1, 31),
+(11, 7, 'Unknown', 1, 31),
+(12, 7, 'Unknown', 1, 31),
+(15, 7, 'Unknown', 1, 18),
+(16, 9, 'Unknown', 1, 31),
+(17, 9, 'Unknown', 1, 31),
+(18, 9, 'Unknown', 1, 31),
+(19, 9, 'Unknown', 1, 31),
+(20, 9, 'Unknown', 1, 31);
 
 -- --------------------------------------------------------
 
@@ -451,6 +478,7 @@ CREATE TABLE `publikasi` (
   `tahun` int DEFAULT NULL,
   `jenis` varchar(64) DEFAULT NULL,
   `link_publikasi` text,
+  `source` enum('scopus','garuda','rama','google_scholar') NOT NULL,
   `citation_count` int DEFAULT '0',
   `id_jurnal` int NOT NULL,
   `status` enum('draft','submitted','verified','rejected') DEFAULT 'draft',
@@ -465,8 +493,24 @@ CREATE TABLE `publikasi` (
 -- Dumping data for table `publikasi`
 --
 
-INSERT INTO `publikasi` (`id_publikasi`, `eid`, `doi`, `judul`, `creator`, `tahun`, `jenis`, `link_publikasi`, `citation_count`, `id_jurnal`, `status`, `is_public`, `verified_by`, `verified_at`, `verification_note`, `created_at`) VALUES
-(1, '2-s2.0-85040225405', '10.1108/JICES-06-2017-0038', 'Justice in technology policy: A systematic review of gender divide literature and the marginal contribution of women on ICT', 'Yeganehfar M.', 2018, 'Journal', 'https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85040225405&origin=inward', 15, 1, 'submitted', 0, NULL, NULL, 'Metadata updated via Scopus Sync', '2025-12-30 19:58:35');
+INSERT INTO `publikasi` (`id_publikasi`, `eid`, `doi`, `judul`, `creator`, `tahun`, `jenis`, `link_publikasi`, `source`, `citation_count`, `id_jurnal`, `status`, `is_public`, `verified_by`, `verified_at`, `verification_note`, `created_at`) VALUES
+(2, '2-s2.0-85040225405', '10.1108/JICES-06-2017-0038', 'Justice in technology policy: A systematic review of gender divide literature and the marginal contribution of women on ICT', 'Yeganehfar M.', 2018, 'Journal', 'https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85040225405&origin=inward', 'scopus', 15, 2, 'submitted', 0, NULL, NULL, NULL, '2026-01-04 15:12:38'),
+(3, '2-s2.0-105005584701', '10.1016/j.dib.2025.111642', 'Indonesian sign language system (SIBI) dataset: Sentences enhanced by diverse facial expressions for total communication', 'Darmawan I.D.M.B.A.', 2025, 'Journal', 'https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=105005584701&origin=inward', 'scopus', 1, 3, 'verified', 1, 3, '2026-01-04 19:17:59', 'GOOOOO', '2026-01-04 17:36:01'),
+(4, '2-s2.0-105010384915', '10.1109/EMES65692.2025.11045598', 'Exploring a Human-in-the-Loop Framework for Adaptive Sign Language Translation in Deaf Education', 'Darmawan I.D.M.B.A.', 2025, 'Conference Proceeding', 'https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=105010384915&origin=inward', 'scopus', 0, 4, 'verified', 1, 3, '2026-01-05 13:08:06', NULL, '2026-01-04 17:36:01'),
+(5, '2-s2.0-85187553295', '10.1109/ICSGTEIS60500.2023.10424116', 'Evaluation of Enrichment in Ontology-based Knowledge Management System', 'Dessy Hariyanti N.K.', 2023, 'Conference Proceeding', 'https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85187553295&origin=inward', 'scopus', 3, 5, 'verified', 1, 3, '2026-01-05 13:08:09', NULL, '2026-01-04 17:36:01'),
+(6, '2-s2.0-85187551816', '10.1109/ICSGTEIS60500.2023.10424020', 'Advancing Total Communication in SIBI: A Proposed Conceptual Framework for Sign Language Translation', 'Darmawan I.D.M.B.A.', 2023, 'Journal Article', 'https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85187551816&origin=inward', 'rama', 3, 1, 'verified', 1, 3, '2026-01-12 16:17:01', NULL, '2026-01-04 17:36:01'),
+(7, '2-s2.0-85103276068', '10.1088/1742-6596/1810/1/012018', 'Rindik rod sound separation with spectral subtraction method', 'Christian Y.', 2021, 'Conference Proceeding', 'https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85103276068&origin=inward', 'scopus', 2, 6, 'verified', 0, 3, '2026-01-05 13:08:13', NULL, '2026-01-04 17:36:01'),
+(8, '2-s2.0-85100747671', '10.1088/1742-6596/1722/1/012014', 'Implementation of audio recognition using mel frequency cepstrum coefficient and dynamic time warping in wirama praharsini', 'Wibawa I.D.G.Y.A.', 2021, 'Conference Proceeding', 'https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85100747671&origin=inward', 'scopus', 15, 6, 'verified', 0, 3, '2026-01-05 13:08:17', NULL, '2026-01-04 17:36:01'),
+(9, '2-s2.0-85100754532', '10.1088/1742-6596/1722/1/012104', 'The effectiveness of the blended learning approach in algorithm and programming courses', 'Darmawan I.D.M.B.A.', 2021, 'Conference Proceeding', 'https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85100754532&origin=inward', 'scopus', 1, 6, 'verified', 0, 3, '2026-01-05 13:58:56', NULL, '2026-01-04 17:36:01'),
+(10, '2-s2.0-85100816777', '10.1088/1742-6596/1722/1/012107', 'Analysis of student interaction with learning objects on blended learning course applying cooperative learning together method on Moodle learning management system', 'Nilakusmawati D.P.E.', 2021, 'Conference Proceeding', 'https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85100816777&origin=inward', 'scopus', 3, 6, 'verified', 0, 3, '2026-01-05 13:58:59', NULL, '2026-01-04 17:36:01'),
+(11, '2-s2.0-85100801164', '10.1088/1742-6596/1722/1/012015', 'Iqra reading verification with mel frequency cepstrum coefficient and dynamic time warping', 'Wibowo A.S.', 2021, 'Conference Proceeding', 'https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85100801164&origin=inward', 'scopus', 3, 6, 'verified', 0, 3, '2026-01-06 03:30:55', 'Sukses\n', '2026-01-04 17:36:01'),
+(12, '2-s2.0-85100729476', '10.1088/1742-6596/1722/1/012071', 'Comparative study of pitch detection algorithm to detect traditional Balinese music tones with various raw materials', 'Brata I.P.B.W.', 2021, 'Conference Proceeding', 'https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85100729476&origin=inward', 'scopus', 2, 6, 'rejected', 0, 3, '2026-01-05 14:00:28', NULL, '2026-01-04 17:36:01'),
+(15, '2-s2.0-85100829499', '10.1088/1742-6596/1722/1/012101', 'Audio fingerprint for automatic Balinese rindik music identification using Gaussian mixture model', 'Widarsa A.A.R.S.', 2021, 'Conference Proceeding', 'https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85100829499&origin=inward', 'scopus', 3, 6, 'verified', 0, 3, '2026-01-04 19:17:51', NULL, '2026-01-04 18:23:43'),
+(16, '2-s2.0-105017099384', '10.31584/jhsmr.20251201', 'Evaluation of the Efficacy and Safety of Chimeric Antigen Receptor-Modified T (CAR-T) Cell Therapy in Leukemia: A Five-Year Updated Systematic Review and Meta-analysis', 'Wiguna I.G.W.W.', 2025, 'Journal', 'https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=105017099384&origin=inward', 'scopus', 0, 7, 'verified', 1, NULL, NULL, NULL, '2026-01-06 06:58:22'),
+(17, '2-s2.0-105010955470', '10.13005/bpj/3199', 'High Cytoplasmic and Membranous Epidermal Growth Factor Receptor (EGFR) Expression as a Risk Factor for High-Grade Ovarian Carcinoma (HGOC)', 'Armerinayanti N.W.', 2025, 'Journal', 'https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=105010955470&origin=inward', 'scopus', 1, 8, 'verified', 1, NULL, NULL, NULL, '2026-01-06 06:58:22'),
+(18, '2-s2.0-85150972779', '10.31557/APJCP.2023.24.3.1015', 'Clinicopathological and Prognostic Significance of Ubiquitin-Specific Protease 39 Overexpression in Solid Cancers: A Meta-Analysis', 'Remitha N.P.S.I.', 2023, 'Journal', 'https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85150972779&origin=inward', 'scopus', 4, 9, 'verified', 1, NULL, NULL, NULL, '2026-01-06 06:58:22'),
+(19, '2-s2.0-85153757155', '10.15562/bmj.v12i1.4031', 'Perception and readiness of medical students and teaching staff to implement interprofessional education', 'Darmayani I.G.A.S.', 2023, 'Journal', 'https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85153757155&origin=inward', 'scopus', 1, 10, 'verified', 1, NULL, NULL, NULL, '2026-01-06 06:58:22'),
+(20, '2-s2.0-85131108030', '10.31557/APJCP.2022.23.5.1595', 'Pretreatment Leukocyte Count Ratios as Metastatic Predictive Factors in Luminal Type Breast Cancer', 'Wiguna I.G.W.W.', 2022, 'Journal', 'https://www.scopus.com/inward/record.uri?partnerID=HzOxMe3b&scp=85131108030&origin=inward', 'scopus', 7, 9, 'verified', 1, NULL, NULL, NULL, '2026-01-06 06:58:22');
 
 -- --------------------------------------------------------
 
@@ -504,7 +548,21 @@ INSERT INTO `sinkronisasi` (`id_sinkron`, `id_user`, `waktu_sinkron`, `status`, 
 (12, 1, '2026-01-03 17:10:55', 'Success', 1, 0, 0, NULL),
 (13, 1, '2026-01-03 17:15:39', 'Success', 1, 0, 0, NULL),
 (14, 1, '2026-01-03 17:23:29', 'Success', 1, 0, 0, NULL),
-(15, 1, '2026-01-03 17:24:48', 'Success', 1, 0, 1, NULL);
+(15, 1, '2026-01-03 17:24:48', 'Success', 1, 0, 1, NULL),
+(16, 1, '2026-01-04 14:51:06', 'Success', 1, 0, 0, NULL),
+(17, 1, '2026-01-04 15:12:34', 'Success', 1, 1, 0, NULL),
+(18, 1, '2026-01-04 16:31:00', 'Success', 1, 0, 0, NULL),
+(19, 1, '2026-01-04 16:31:45', 'Success', 1, 0, 0, NULL),
+(20, 1, '2026-01-04 16:32:25', 'Success', 1, 0, 0, NULL),
+(21, 1, '2026-01-04 17:35:11', 'Success', 0, 0, 0, NULL),
+(22, 1, '2026-01-04 17:36:00', 'Success', 11, 11, 0, NULL),
+(23, 5, '2026-01-04 18:22:17', 'Success', 11, 0, 0, NULL),
+(24, 5, '2026-01-04 18:22:55', 'Success', 11, 1, 0, NULL),
+(25, 5, '2026-01-04 18:23:42', 'Success', 11, 1, 0, NULL),
+(26, 5, '2026-01-05 13:06:39', 'Success', 11, 0, 0, NULL),
+(27, 5, '2026-01-05 13:07:12', 'Success', 11, 0, 0, NULL),
+(28, 7, '2026-01-06 06:57:55', 'Failed', 0, 0, 0, 'Elsevier API Error: Unauthorized'),
+(29, 7, '2026-01-06 06:58:21', 'Success', 5, 5, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -550,10 +608,13 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id_user`, `email`, `password_hash`, `role`, `id_dosen`, `status`, `verified_by`, `verified_at`, `verification_note`, `created_at`, `updated_at`) VALUES
-(1, 'testSubject@gmail.com', 'testSubject', 'Dosen', 1, 'verified', 3, '2026-01-02 07:59:11', NULL, '2025-12-30 19:37:55', '2026-01-02 07:59:11'),
-(2, 'dosen1@test.com', '$2b$10$IlWGPy3AHzseUtHESh5uGuR/vXqwnfvsXfPRKjpXeCcAkxbTd3Cri', 'Dosen', 2, 'rejected', 3, '2026-01-02 08:09:19', NULL, '2025-12-31 18:46:06', '2026-01-02 08:09:19'),
+(1, 'testSubject@gmail.com', 'testSubject', 'Dosen', 1, 'verified', 3, '2026-01-04 18:54:27', NULL, '2025-12-30 19:37:55', '2026-01-04 18:54:27'),
+(2, 'dosen1@test.com', '$2b$10$IlWGPy3AHzseUtHESh5uGuR/vXqwnfvsXfPRKjpXeCcAkxbTd3Cri', 'Dosen', 2, 'verified', 3, '2026-01-06 03:55:54', NULL, '2025-12-31 18:46:06', '2026-01-06 03:55:54'),
 (3, 'admin@test.com', '$2b$10$0JVEcY7AfbTwNIVF8wTbcOSgKIUCXVZ.wX02CsjwJnY872bTLuZOO', 'Admin', 4, 'verified', NULL, NULL, NULL, '2025-12-31 18:52:24', '2025-12-31 19:23:07'),
-(4, 'dosen3@test.com', '$2b$10$oUCaxb6XOAsNyggIvKDJkOCGvsmjar5092Bl81t6Y6TcX07dZ5bSW', 'Dosen', 5, 'submitted', 3, '2026-01-02 07:27:47', 'Data lengkap dan valid', '2025-12-31 18:57:21', '2026-01-02 07:59:30');
+(4, 'dosen3@test.com', '$2b$10$oUCaxb6XOAsNyggIvKDJkOCGvsmjar5092Bl81t6Y6TcX07dZ5bSW', 'Dosen', 5, 'verified', 3, '2026-01-06 03:55:57', NULL, '2025-12-31 18:57:21', '2026-01-06 03:55:57'),
+(5, 'dewabayu@gmail.com', '$2b$10$rXmmcgS.d9GYhvgJvK1WFeY6Wb1XXu65ymys9cwPI0IX8RkWkPYVe', 'Dosen', 7, 'verified', 3, '2026-01-12 16:04:14', NULL, '2026-01-04 16:47:52', '2026-01-12 16:04:14'),
+(6, 'tjiptaut@gmail.com', '$2b$10$CN5Zz8jDP91siUSOTM03ReJXeYHoZ.oI8a/ewCwvvypLX68G1.MpG', 'Dosen', 8, 'submitted', NULL, NULL, NULL, '2026-01-06 03:34:04', '2026-01-06 03:34:04'),
+(7, 'abcd@gmail.com', '$2b$10$n4/lEYjIz4bRfoWi64WlS./8ddUkDJCrvDg/JGuAWCHgg9XDK6H6G', 'Dosen', 9, 'verified', 3, '2026-01-06 06:57:01', NULL, '2026-01-06 06:54:47', '2026-01-06 06:57:01');
 
 --
 -- Indexes for dumped tables
@@ -671,25 +732,25 @@ ALTER TABLE `countries`
 -- AUTO_INCREMENT for table `dosen`
 --
 ALTER TABLE `dosen`
-  MODIFY `id_dosen` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_dosen` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `jurnal`
 --
 ALTER TABLE `jurnal`
-  MODIFY `id_jurnal` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_jurnal` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `publikasi`
 --
 ALTER TABLE `publikasi`
-  MODIFY `id_publikasi` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_publikasi` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `sinkronisasi`
 --
 ALTER TABLE `sinkronisasi`
-  MODIFY `id_sinkron` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id_sinkron` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `tag`
@@ -701,7 +762,7 @@ ALTER TABLE `tag`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id_user` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_user` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Constraints for dumped tables
