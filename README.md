@@ -127,11 +127,16 @@ Frontend will run on `http://localhost:5173`
 
 ## Team
 
-> Informatics - Udayana University · Software Engineering Project
+**Informatics - Udayana University · Software Engineering Project**
+
 > Leonardo Pramudyo Hutomo
+
 > P. Made Hesa Dharma Putra
+
 > I Gusti Ngurah Agus Satria Wibawa
+
 > Kadek Agus Candra Wijaya
+
 > I Kadek Rio Aryan Darmawan
 
 ---
