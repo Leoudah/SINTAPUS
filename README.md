@@ -17,9 +17,9 @@ A web application that recreates the [SINTA (Science and Technology Index)](http
 
 ## Features
 
-- 👤 **Lecturer Profiles** — Browse and manage lecturer data including name, position, and academic info
-- 📄 **Publications & Journals** — View and filter lecturer publication records
-- 🔐 **Authentication** — Login system for admin/user access control
+- 👤 **Lecturer Profiles** : Browse and manage lecturer data including name, position, and academic info
+- 📄 **Publications & Journals** : View and filter lecturer publication records
+- 🔐 **Authentication** : Login system for admin/user access control
 
 ---
 
